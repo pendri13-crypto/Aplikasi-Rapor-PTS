@@ -975,12 +975,12 @@ export const PengaturanSekolahView: React.FC = () => {
               <div className="bg-white p-6 sm:p-8 rounded-2xl border-2 border-slate-300 shadow-sm max-w-4xl mx-auto">
                 <div className="flex items-center justify-between gap-4">
                   {/* Logo Pemda */}
-                  <div className="w-28 h-28 flex items-center justify-center shrink-0">
+                  <div className="w-32 h-32 flex items-center justify-center shrink-0">
                     {settings.logoPemdaUrl ? (
                       <img
                         src={settings.logoPemdaUrl}
                         alt="Logo Pemda"
-                        className="max-h-28 max-w-28 object-contain"
+                        className="max-h-32 max-w-32 object-contain scale-110"
                       />
                     ) : (
                       <div className="w-20 h-20 rounded-xl border border-slate-300 flex items-center justify-center font-bold text-slate-400 text-[10px]">

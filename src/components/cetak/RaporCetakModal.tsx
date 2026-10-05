@@ -61,12 +61,12 @@ export const RaporCetakModal: React.FC<RaporCetakModalProps> = ({
           <div className="pb-3 mb-4 text-center relative">
             <div className="flex items-center justify-between gap-4">
               {/* Logo Pemda / Dinas (Kiri) */}
-              <div className="w-28 h-28 flex items-center justify-center shrink-0">
+              <div className="w-32 h-32 flex items-center justify-center shrink-0">
                 {settings.logoPemdaUrl ? (
                   <img
                     src={settings.logoPemdaUrl}
                     alt="Logo Pemda"
-                    className="max-h-28 max-w-28 object-contain print:max-h-28 print:max-w-28"
+                    className="max-h-32 max-w-32 object-contain print:max-h-32 print:max-w-32 scale-110"
                   />
                 ) : (
                   <div className="w-20 h-20 rounded-xl border border-slate-300 flex items-center justify-center font-bold text-slate-400 text-[10px]">
