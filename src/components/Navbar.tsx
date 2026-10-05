@@ -130,8 +130,12 @@ export const Navbar: React.FC<NavbarProps> = ({
             onClick={() => setActiveTab('dashboard')}
           >
             <div className="relative">
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-indigo-700 to-blue-600 flex items-center justify-center text-white shadow-md shadow-indigo-500/25 ring-2 ring-white group-hover:scale-105 transition-transform duration-200">
-                <GraduationCap className="w-5 h-5" />
+              <div className="w-10 h-10 rounded-2xl bg-white border border-slate-200/80 flex items-center justify-center p-1 shadow-sm ring-2 ring-white group-hover:scale-105 transition-transform duration-200 overflow-hidden">
+                <img
+                  src="https://i.ibb.co.com/rGJLMWct/LOGO-SEKOLAH-3-D-SMPN-1-RAJAPOLAH.png"
+                  alt="Logo SMPN 1 Rajapolah"
+                  className="w-full h-full object-contain drop-shadow-xs"
+                />
               </div>
               {/* Little glowing accent dot */}
               <span className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full border-2 border-white ring-1 ring-emerald-400/40" />

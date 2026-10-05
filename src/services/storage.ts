@@ -106,7 +106,7 @@ export const StorageService = {
       ...INITIAL_SCHOOL_SETTINGS,
       ...s,
       logoPemdaUrl: s.logoPemdaUrl !== undefined ? s.logoPemdaUrl : INITIAL_SCHOOL_SETTINGS.logoPemdaUrl,
-      logoSekolahUrl: s.logoSekolahUrl !== undefined ? s.logoSekolahUrl : INITIAL_SCHOOL_SETTINGS.logoSekolahUrl,
+      logoSekolahUrl: (s.logoSekolahUrl && !s.logoSekolahUrl.startsWith('data:image/svg+xml')) ? s.logoSekolahUrl : INITIAL_SCHOOL_SETTINGS.logoSekolahUrl,
     };
   },
   saveSettings: (settings: SchoolSettings) => {

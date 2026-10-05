@@ -2,7 +2,7 @@ import { SchoolClass, Subject, UserAccount, Student, GradeRecord, SchoolSettings
 
 export const DEFAULT_LOGO_PEMDA = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="%231e3a8a" stroke="%23f59e0b" stroke-width="4"/><polygon points="50,15 62,38 88,40 68,58 74,84 50,70 26,84 32,58 12,40 38,38" fill="%23f59e0b"/><circle cx="50" cy="50" r="16" fill="%23ffffff"/><path d="M42,56 C42,48 58,48 58,56 Z M50,38 L50,47" stroke="%231e3a8a" stroke-width="3" fill="%23f59e0b"/></svg>`;
 
-export const DEFAULT_LOGO_SEKOLAH = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50,8 L85,25 L85,60 C85,78 50,92 50,92 C50,92 15,78 15,60 L15,25 Z" fill="%230f766e" stroke="%23fbbf24" stroke-width="3"/><path d="M50,30 L70,42 L50,54 L30,42 Z" fill="%23ffffff"/><path d="M30,48 L50,60 L70,48 L70,55 L50,67 L30,55 Z" fill="%23fbbf24"/><circle cx="50" cy="24" r="5" fill="%23fbbf24"/></svg>`;
+export const DEFAULT_LOGO_SEKOLAH = 'https://i.ibb.co.com/rGJLMWct/LOGO-SEKOLAH-3-D-SMPN-1-RAJAPOLAH.png';
 
 export const INITIAL_SCHOOL_SETTINGS: SchoolSettings = {
   namaSekolah: 'SMPN 1 RAJAPOLAH',
@@ -80,7 +80,7 @@ export const INITIAL_CLASSES: SchoolClass[] = (() => {
         nama: `Kelas ${tingkat}-${kode}`,
         waliKelasNama: waliName,
         waliKelasNip: waliNip,
-        tahunAjaran: '2026/2027',
+        tahunAjaran: '2024/2025',
         semester: 'Ganjil',
         fase: 'D'
       });
@@ -100,7 +100,7 @@ export const INITIAL_USERS: UserAccount[] = [
     role: 'SUPER_ADMIN',
     assignedClassIds: INITIAL_CLASSES.map(c => c.id), // Seluruh 33 kelas
     password: 'Superadmin',
-    email: 'superadmin@smpn1rajapolah.sch.id',
+    email: 'superadmin@smpn1cemerlang.sch.id',
     noHp: '081234567890'
   }
 ];
@@ -261,7 +261,7 @@ export const INITIAL_GRADES: GradeRecord[] = (() => {
           classId: student.classId,
           mapelId: subject.id,
           semester: 'Ganjil',
-          tahunAjaran: '2026/2027',
+          tahunAjaran: '2024/2025',
           triwulan: 1, // PTS 3 Bulanan
           nilaiTugas1: t1,
           nilaiTugas2: t2,
