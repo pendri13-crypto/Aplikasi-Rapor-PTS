@@ -13,8 +13,10 @@ import {
   GraduationCap,
   Calculator,
   HelpCircle,
-  FileCheck
+  FileCheck,
+  FileSpreadsheet
 } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { UserAccount, SchoolClass, Subject, Student, GradeRecord } from '../../types';
 import { StorageService } from '../../services/storage';
 import { calculateGradeDerived } from '../../data/seedData';
@@ -310,91 +312,134 @@ export const GradeInputView: React.FC<GradeInputViewProps> = ({
     setTimeout(() => setSaveSuccessMsg(null), 4000);
   };
 
-  // Export to CSV
-  const handleExportCSV = () => {
-    const headers = ['No', 'NIS', 'NISN', 'Nama Siswa', 'JK', 'Tugas 1', 'Tugas 2', 'Tugas 3', 'Rata Formatif', 'UH 1', 'UH 2', 'Rata UH', 'Nilai PTS', 'Nilai Akhir', 'Predikat', 'Keterangan'];
-    const csvRows = [
-      headers.join(';'),
-      ...rows.map((r, i) => [
-        i + 1,
-        `"${r.student.nis}"`,
-        `"${r.student.nisn}"`,
-        `"${r.student.nama}"`,
-        r.student.jenisKelamin,
-        r.t1,
-        r.t2,
-        r.t3,
-        r.formatifAvg,
-        r.uh1,
-        r.uh2,
-        r.uhAvg,
-        r.pts,
-        r.nilaiAkhir,
-        r.predikat,
-        r.keterangan
-      ].join(';'))
+  // Export to Excel (.xlsx)
+  const handleExportExcel = () => {
+    const excelData = rows.map((r, i) => ({
+      'No': i + 1,
+      'NIS': String(r.student.nis),
+      'NISN': String(r.student.nisn || '-'),
+      'Nama_Siswa': r.student.nama,
+      'JK': r.student.jenisKelamin,
+      'Tugas_1': typeof r.t1 === 'number' ? r.t1 : '',
+      'Tugas_2': typeof r.t2 === 'number' ? r.t2 : '',
+      'Tugas_3': typeof r.t3 === 'number' ? r.t3 : '',
+      'Rata_Formatif': r.formatifAvg || 0,
+      'UH_1': typeof r.uh1 === 'number' ? r.uh1 : '',
+      'UH_2': typeof r.uh2 === 'number' ? r.uh2 : '',
+      'Rata_UH': r.uhAvg || 0,
+      'Nilai_PTS': typeof r.pts === 'number' ? r.pts : '',
+      'Nilai_Akhir': r.nilaiAkhir || 0,
+      'Predikat': r.predikat || '-',
+      'Keterangan': r.keterangan || '-',
+      'Capaian_Kompetensi': r.capaianKompetensi || ''
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+    // Set column widths for readable layout
+    worksheet['!cols'] = [
+      { wch: 6 },  // No
+      { wch: 12 }, // NIS
+      { wch: 14 }, // NISN
+      { wch: 28 }, // Nama_Siswa
+      { wch: 6 },  // JK
+      { wch: 10 }, // Tugas_1
+      { wch: 10 }, // Tugas_2
+      { wch: 10 }, // Tugas_3
+      { wch: 14 }, // Rata_Formatif
+      { wch: 10 }, // UH_1
+      { wch: 10 }, // UH_2
+      { wch: 12 }, // Rata_UH
+      { wch: 12 }, // Nilai_PTS
+      { wch: 12 }, // Nilai_Akhir
+      { wch: 10 }, // Predikat
+      { wch: 16 }, // Keterangan
+      { wch: 45 }  // Capaian_Kompetensi
     ];
 
-    const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `Nilai_PTS_${selectedClassId}_${selectedMapelId}_${settings.tahunAjaran.replace('/', '-')}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, `Nilai_${selectedClassId}`);
+
+    const fileName = `Nilai_PTS_${selectedClassId}_${selectedMapelId}_${settings.tahunAjaran.replace('/', '-')}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
+
+    setSaveSuccessMsg(`Berhasil mengekspor format Excel: ${fileName}`);
+    setTimeout(() => setSaveSuccessMsg(null), 3000);
   };
 
-  // Import from CSV
+  // Import from Excel (.xlsx, .xls, .csv)
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (event) => {
-      const text = event.target?.result as string;
-      if (!text) return;
+      try {
+        const data = new Uint8Array(event.target?.result as ArrayBuffer);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const jsonData = XLSX.utils.sheet_to_json<any>(worksheet);
 
-      const lines = text.split('\n').filter(l => l.trim().length > 0);
-      if (lines.length < 2) return;
-
-      let matchCount = 0;
-      const updatedRows = [...rows];
-
-      for (let i = 1; i < lines.length; i++) {
-        const separator = lines[i].includes(';') ? ';' : ',';
-        const cols = lines[i].split(separator).map(c => c.trim().replace(/^"|"$/g, ''));
-        const nis = cols[1];
-        const t1 = Number(cols[5]) || 0;
-        const t2 = Number(cols[6]) || 0;
-        const t3 = Number(cols[7]) || 0;
-        const uh1 = Number(cols[9]) || 0;
-        const uh2 = Number(cols[10]) || 0;
-        const pts = Number(cols[12]) || 0;
-
-        const rowIdx = updatedRows.findIndex(r => r.student.nis === nis);
-        if (rowIdx >= 0) {
-          const uRow: EditableGradeRow = {
-            ...updatedRows[rowIdx],
-            t1,
-            t2,
-            t3,
-            uh1,
-            uh2,
-            pts,
-            isDirty: true
-          };
-          const calc = calculateRowValues(uRow);
-          updatedRows[rowIdx] = { ...uRow, ...calc };
-          matchCount++;
+        if (!jsonData || jsonData.length === 0) {
+          setImportStatus('File Excel kosong atau format tidak sesuai.');
+          setTimeout(() => setImportStatus(null), 4000);
+          return;
         }
-      }
 
-      setRows(updatedRows);
-      setImportStatus(`Berhasil membaca dan mencocokkan ${matchCount} nilai siswa dari file.`);
-      setTimeout(() => setImportStatus(null), 4000);
+        let matchCount = 0;
+        const updatedRows = [...rows];
+
+        jsonData.forEach((row) => {
+          // Match student NIS
+          const nis = String(row['NIS'] || row['nis'] || row['Nis'] || row['Nomor Induk'] || '').trim();
+          if (!nis) return;
+
+          const t1Val = row['Tugas_1'] ?? row['Tugas 1'] ?? row['T1'] ?? row['t1'];
+          const t2Val = row['Tugas_2'] ?? row['Tugas 2'] ?? row['T2'] ?? row['t2'];
+          const t3Val = row['Tugas_3'] ?? row['Tugas 3'] ?? row['T3'] ?? row['t3'];
+          const uh1Val = row['UH_1'] ?? row['UH 1'] ?? row['UH1'] ?? row['uh1'];
+          const uh2Val = row['UH_2'] ?? row['UH 2'] ?? row['UH2'] ?? row['uh2'];
+          const ptsVal = row['Nilai_PTS'] ?? row['Nilai PTS'] ?? row['PTS'] ?? row['pts'];
+          const capaianVal = row['Capaian_Kompetensi'] ?? row['Capaian Kompetensi'] ?? row['Capaian'] ?? row['capaian'];
+
+          const t1 = t1Val !== undefined && t1Val !== '' ? Math.max(0, Math.min(100, Number(t1Val))) : '';
+          const t2 = t2Val !== undefined && t2Val !== '' ? Math.max(0, Math.min(100, Number(t2Val))) : '';
+          const t3 = t3Val !== undefined && t3Val !== '' ? Math.max(0, Math.min(100, Number(t3Val))) : '';
+          const uh1 = uh1Val !== undefined && uh1Val !== '' ? Math.max(0, Math.min(100, Number(uh1Val))) : '';
+          const uh2 = uh2Val !== undefined && uh2Val !== '' ? Math.max(0, Math.min(100, Number(uh2Val))) : '';
+          const pts = ptsVal !== undefined && ptsVal !== '' ? Math.max(0, Math.min(100, Number(ptsVal))) : '';
+
+          const rowIdx = updatedRows.findIndex(r => r.student.nis === nis);
+          if (rowIdx >= 0) {
+            const uRow: EditableGradeRow = {
+              ...updatedRows[rowIdx],
+              t1: isNaN(Number(t1)) ? '' : t1,
+              t2: isNaN(Number(t2)) ? '' : t2,
+              t3: isNaN(Number(t3)) ? '' : t3,
+              uh1: isNaN(Number(uh1)) ? '' : uh1,
+              uh2: isNaN(Number(uh2)) ? '' : uh2,
+              pts: isNaN(Number(pts)) ? '' : pts,
+              capaianKompetensi: capaianVal ? String(capaianVal).trim() : updatedRows[rowIdx].capaianKompetensi,
+              isDirty: true
+            };
+            const calc = calculateRowValues(uRow);
+            updatedRows[rowIdx] = { ...uRow, ...calc };
+            matchCount++;
+          }
+        });
+
+        setRows(updatedRows);
+        setImportStatus(`Berhasil membaca dan mencocokkan ${matchCount} nilai siswa dari file Excel!`);
+        setTimeout(() => setImportStatus(null), 4000);
+      } catch (err: any) {
+        console.error('Gagal membaca file Excel:', err);
+        setImportStatus('Terjadi kesalahan saat memproses file Excel.');
+        setTimeout(() => setImportStatus(null), 4000);
+      }
     };
 
-    reader.readAsText(file);
+    reader.readAsArrayBuffer(file);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
@@ -465,29 +510,29 @@ export const GradeInputView: React.FC<GradeInputViewProps> = ({
               )}
             </div>
 
-            {/* CSV Export/Import */}
+            {/* Excel Export/Import */}
             <button
-              onClick={handleExportCSV}
+              onClick={handleExportExcel}
               className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5"
-              title="Ekspor CSV"
+              title="Ekspor Excel"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span>Ekspor CSV</span>
+              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Ekspor Excel</span>
             </button>
 
             <button
               onClick={() => fileInputRef.current?.click()}
               className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5"
-              title="Impor CSV"
+              title="Impor Excel"
             >
-              <Upload className="w-3.5 h-3.5" />
-              <span>Impor CSV</span>
+              <Upload className="w-3.5 h-3.5 text-indigo-600" />
+              <span>Impor Excel</span>
             </button>
             <input
               type="file"
               ref={fileInputRef}
               onChange={handleFileUpload}
-              accept=".csv"
+              accept=".xlsx, .xls, .csv"
               className="hidden"
             />
 

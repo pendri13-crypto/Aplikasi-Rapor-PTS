@@ -52,6 +52,7 @@ export const RekapitulasiView: React.FC<RekapitulasiViewProps> = ({
   
   // Student modal for previewing/printing official report card
   const [selectedStudentForRapor, setSelectedStudentForRapor] = useState<StudentReportSummary | null>(null);
+  const [showBatchPrintAll, setShowBatchPrintAll] = useState(false);
 
   const currentClass = classes.find(c => c.id === selectedClassId);
   const summaryData = StorageService.getClassSummary(selectedClassId);
@@ -117,6 +118,15 @@ export const RekapitulasiView: React.FC<RekapitulasiViewProps> = ({
 
           {/* Action buttons */}
           <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={() => setShowBatchPrintAll(true)}
+              className="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-emerald-600/20 flex items-center gap-1.5 active:scale-95"
+              title="Cetak Rapor Seluruh Siswa Kelas Ini ke PDF Format A4"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>Cetak Rapor Semua Siswa (PDF A4)</span>
+            </button>
+
             <button
               onClick={() => onNavigateToLeger(selectedClassId)}
               className="px-3.5 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5"
@@ -552,12 +562,21 @@ export const RekapitulasiView: React.FC<RekapitulasiViewProps> = ({
         )}
       </div>
 
-      {/* Rapor Print Modal */}
+      {/* Rapor Print Modal - Individual */}
       {selectedStudentForRapor && (
         <RaporCetakModal
           summary={selectedStudentForRapor}
           schoolClass={currentClass!}
           onClose={() => setSelectedStudentForRapor(null)}
+        />
+      )}
+
+      {/* Rapor Print Modal - Batch All Students (PDF A4) */}
+      {showBatchPrintAll && currentClass && (
+        <RaporCetakModal
+          summaries={summaryData.summaries}
+          schoolClass={currentClass}
+          onClose={() => setShowBatchPrintAll(false)}
         />
       )}
     </div>
