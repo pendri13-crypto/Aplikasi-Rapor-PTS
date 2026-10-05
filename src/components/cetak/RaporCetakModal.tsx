@@ -31,52 +31,52 @@ const StudentReportDocument: React.FC<StudentReportDocumentProps> = ({
     <div className="text-slate-900 bg-white font-sans text-xs selection:bg-none">
       {/* KOP RESMI SEKOLAH */}
       <div className="pb-2.5 mb-3 text-center relative">
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-4">
           {/* Logo Pemda / Dinas (Kiri) */}
-          <div className="w-24 h-24 flex items-center justify-center shrink-0">
+          <div className="w-32 h-32 sm:w-36 sm:h-36 print:w-32 print:h-32 flex items-center justify-center shrink-0">
             {settings.logoPemdaUrl ? (
               <img
                 src={settings.logoPemdaUrl}
                 alt="Logo Pemda"
-                className="max-h-24 max-w-24 object-contain print:max-h-24 print:max-w-24"
+                className="w-full h-full max-h-32 max-w-32 sm:max-h-36 sm:max-w-36 print:max-h-32 print:max-w-32 object-contain"
               />
             ) : (
-              <div className="w-16 h-16 rounded-xl border border-slate-300 flex items-center justify-center font-bold text-slate-400 text-[10px]">
-                <School className="w-8 h-8 text-slate-700" />
+              <div className="w-24 h-24 rounded-xl border border-slate-300 flex items-center justify-center font-bold text-slate-400 text-xs">
+                <School className="w-12 h-12 text-slate-700" />
               </div>
             )}
           </div>
 
           {/* Teks KOP Resmi */}
-          <div className="flex-1 px-2 text-center">
-            <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-800">
+          <div className="flex-1 px-3 text-center">
+            <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-800">
               PEMERINTAH DAERAH KABUPATEN TASIKMALAYA
             </h3>
-            <h3 className="text-[11px] font-bold uppercase tracking-wider text-slate-800">
+            <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-800">
               DINAS PENDIDIKAN DAN KEBUDAYAAN
             </h3>
-            <h1 className="text-base sm:text-lg font-black uppercase tracking-tight text-slate-900 mt-0.5">
+            <h1 className="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 mt-1 mb-0.5">
               {settings.namaSekolah}
             </h1>
-            <p className="text-[10px] text-slate-700 mt-0.5 font-medium">
+            <p className="text-[11px] text-slate-700 font-medium">
               NPSN: {settings.npsn} • {settings.alamatSekolah}, {settings.kecamatan}, {settings.kabupatenKota}
             </p>
-            <p className="text-[9.5px] text-slate-500">
+            <p className="text-[10px] text-slate-500 mt-0.5">
               Telepon: {settings.telepon} • Pos-el: {settings.email} • Kode Pos: {settings.kodePos}
             </p>
           </div>
 
           {/* Logo Sekolah (Kanan) */}
-          <div className="w-24 h-24 flex items-center justify-center shrink-0">
+          <div className="w-32 h-32 sm:w-36 sm:h-36 print:w-32 print:h-32 flex items-center justify-center shrink-0">
             {settings.logoSekolahUrl ? (
               <img
                 src={settings.logoSekolahUrl}
                 alt="Logo Sekolah"
-                className="max-h-24 max-w-24 object-contain print:max-h-24 print:max-w-24"
+                className="w-full h-full max-h-32 max-w-32 sm:max-h-36 sm:max-w-36 print:max-h-32 print:max-w-32 object-contain"
               />
             ) : (
-              <div className="w-16 h-16 rounded-xl border border-slate-300 flex items-center justify-center font-bold text-slate-400 text-[10px]">
-                <span className="text-[9px] font-bold text-center leading-tight">LOGO<br />SEKOLAH</span>
+              <div className="w-24 h-24 rounded-xl border border-slate-300 flex items-center justify-center font-bold text-slate-400 text-xs">
+                <span className="text-[11px] font-bold text-center leading-tight">LOGO<br />SEKOLAH</span>
               </div>
             )}
           </div>

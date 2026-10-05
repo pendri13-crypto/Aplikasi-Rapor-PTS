@@ -1009,12 +1009,12 @@ export const PengaturanSekolahView: React.FC = () => {
                   </div>
 
                   {/* Logo Sekolah */}
-                  <div className="w-28 h-28 flex items-center justify-center shrink-0">
+                  <div className="w-32 h-32 flex items-center justify-center shrink-0">
                     {settings.logoSekolahUrl ? (
                       <img
                         src={settings.logoSekolahUrl}
                         alt="Logo Sekolah"
-                        className="max-h-28 max-w-28 object-contain"
+                        className="max-h-32 max-w-32 object-contain"
                       />
                     ) : (
                       <div className="w-20 h-20 rounded-xl border border-slate-300 flex items-center justify-center font-bold text-slate-400 text-[10px]">
