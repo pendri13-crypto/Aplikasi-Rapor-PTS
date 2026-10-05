@@ -24,12 +24,14 @@ export default function App() {
 
   // Handle user login success
   const handleLoginSuccess = (user: UserAccount) => {
+    StorageService.setCurrentUser(user);
     setCurrentUser(user);
     setActiveTab('dashboard');
   };
 
   // Switch user role (demo tester)
   const handleSwitchUser = (user: UserAccount) => {
+    StorageService.setCurrentUser(user);
     setCurrentUser(user);
   };
 
@@ -112,7 +114,7 @@ export default function App() {
           </div>
 
           <div className="flex items-center gap-4">
-            <span>Standar Kurikulum Merdeka & K13</span>
+            <span>Standar Kurikulum Merdeka</span>
             <span>Rekapitulasi 3 Bulanan Otomatis</span>
           </div>
         </div>
