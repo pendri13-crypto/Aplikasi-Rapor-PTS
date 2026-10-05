@@ -49,19 +49,19 @@ const StudentReportDocument: React.FC<StudentReportDocumentProps> = ({
 
           {/* Teks KOP Resmi */}
           <div className="flex-1 px-3 text-center">
-            <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-800">
+            <h3 className="text-sm sm:text-base print:text-base font-extrabold uppercase tracking-wide text-slate-900 leading-tight">
               PEMERINTAH DAERAH KABUPATEN TASIKMALAYA
             </h3>
-            <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-slate-800">
+            <h3 className="text-sm sm:text-base print:text-base font-extrabold uppercase tracking-wide text-slate-900 leading-tight">
               DINAS PENDIDIKAN DAN KEBUDAYAAN
             </h3>
-            <h1 className="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 mt-1 mb-0.5">
+            <h1 className="text-xl sm:text-2xl print:text-2xl font-black uppercase tracking-tight text-slate-950 mt-1 mb-0.5 leading-tight">
               {settings.namaSekolah}
             </h1>
-            <p className="text-[11px] text-slate-700 font-medium">
+            <p className="text-[11px] sm:text-xs text-slate-700 font-medium">
               NPSN: {settings.npsn} • {settings.alamatSekolah}, {settings.kecamatan}, {settings.kabupatenKota}
             </p>
-            <p className="text-[10px] text-slate-500 mt-0.5">
+            <p className="text-[10px] sm:text-[10.5px] text-slate-500 mt-0.5">
               Telepon: {settings.telepon} • Pos-el: {settings.email} • Kode Pos: {settings.kodePos}
             </p>
           </div>

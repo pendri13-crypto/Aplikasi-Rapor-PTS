@@ -991,13 +991,13 @@ export const PengaturanSekolahView: React.FC = () => {
 
                   {/* KOP Text */}
                   <div className="flex-1 px-2 text-center leading-tight">
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+                    <h4 className="text-sm sm:text-base font-extrabold uppercase tracking-wide text-slate-900 leading-tight">
                       PEMERINTAH DAERAH KABUPATEN TASIKMALAYA
                     </h4>
-                    <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+                    <h4 className="text-sm sm:text-base font-extrabold uppercase tracking-wide text-slate-900 leading-tight">
                       DINAS PENDIDIKAN DAN KEBUDAYAAN
                     </h4>
-                    <h2 className="text-lg sm:text-xl font-black uppercase tracking-tight text-slate-900 mt-1">
+                    <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-slate-950 mt-1 mb-0.5">
                       {settings.namaSekolah}
                     </h2>
                     <p className="text-[11px] text-slate-700 mt-0.5 font-medium">
