@@ -280,53 +280,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     </div>
                   </div>
 
-                  {/* Quick Switch Demo Accounts */}
-                  <div className="px-2 py-1.5 flex items-center justify-between text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                    <span className="flex items-center gap-1.5">
-                      <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                      <span>Ganti Akun Demo (1-Klik)</span>
-                    </span>
-                    <span className="text-[10px] text-slate-400 font-normal">Pilih Peran</span>
-                  </div>
 
-                  <div className="max-h-56 overflow-y-auto space-y-1.5 pr-1 py-1">
-                    {users.map(u => {
-                      const isActive = currentUser?.id === u.id;
-                      return (
-                        <button
-                          key={u.id}
-                          onClick={() => handleSelectUser(u)}
-                          className={`w-full text-left p-2 rounded-xl text-xs flex items-center justify-between transition-all ${
-                            isActive
-                              ? 'bg-indigo-50/90 border border-indigo-200 text-indigo-900'
-                              : 'hover:bg-slate-50 text-slate-700'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2">
-                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-[10px] ${
-                              u.role === 'SUPER_ADMIN'
-                                ? 'bg-amber-100 text-amber-800'
-                                : 'bg-slate-100 text-slate-700'
-                            }`}>
-                              {u.role === 'SUPER_ADMIN' ? 'A' : 'G'}
-                            </div>
-                            <div>
-                              <div className="flex items-center gap-1.5">
-                                <span className="font-bold text-slate-900 text-xs">{u.nama.split(',')[0]}</span>
-                                <span className="text-[9px] font-medium text-slate-400">
-                                  {u.role === 'SUPER_ADMIN' ? 'Admin' : u.mapelName}
-                                </span>
-                              </div>
-                              <p className="text-[10px] font-mono text-slate-400">
-                                {u.nip}
-                              </p>
-                            </div>
-                          </div>
-                          {isActive && <Check className="w-4 h-4 text-indigo-600 shrink-0" />}
-                        </button>
-                      );
-                    })}
-                  </div>
 
                   {/* Supabase status in dropdown */}
                   <div className="mt-2 pt-2 border-t border-slate-100 px-2 py-1 flex items-center justify-between text-[11px] text-slate-500">

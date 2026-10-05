@@ -90,9 +90,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="flex justify-center items-start">
           {/* Main Login Form */}
-          <div className="lg:col-span-7 bg-white text-slate-900 rounded-3xl p-7 sm:p-9 shadow-2xl shadow-black/40 border border-slate-100">
+          <div className="w-full max-w-md bg-white text-slate-900 rounded-3xl p-7 sm:p-9 shadow-2xl shadow-black/40 border border-slate-100">
             <div className="flex items-center justify-between pb-5 border-b border-slate-100 mb-6">
               <div>
                 <h2 className="text-xl font-bold text-slate-900">Autentikasi Pengguna</h2>
@@ -183,130 +183,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             </div>
           </div>
 
-          {/* Quick Demo Accounts Selection */}
-          <div className="lg:col-span-5 space-y-4">
-            <div className="bg-slate-800/80 backdrop-blur-md rounded-3xl p-6 border border-slate-700 shadow-xl">
-              <div className="flex items-center gap-2 text-amber-400 mb-3">
-                <Sparkles className="w-5 h-5" />
-                <h3 className="font-bold text-sm text-white">Akun Masuk Cepat (1-Klik)</h3>
-              </div>
-              <p className="text-xs text-slate-300 mb-4">
-                Klik kartu di bawah untuk langsung login dan mencoba fitur hak akses Super Admin atau Guru Mapel:
-              </p>
 
-              <div className="space-y-2.5">
-                {/* Super Admin Preset */}
-                <div
-                  onClick={() => {
-                    setNip('Superadmin');
-                    setPassword('Superadmin');
-                    setErrorMsg('');
-                    const res = StorageService.login('Superadmin', 'Superadmin');
-                    if (res.success && res.user) onLoginSuccess(res.user);
-                  }}
-                  className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 hover:bg-amber-500/20 hover:border-amber-500/50 cursor-pointer transition-all group"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-amber-500 text-white flex items-center justify-center shadow-md">
-                        <Shield className="w-4 h-4" />
-                      </div>
-                      <div>
-                        <h4 className="text-xs font-bold text-amber-200 group-hover:text-amber-100">
-                          Super Administrator
-                        </h4>
-                        <p className="text-[11px] font-mono text-slate-300">
-                          Username: <strong className="text-amber-300">Superadmin</strong> • Pass: <strong className="text-amber-300">Superadmin</strong>
-                        </p>
-                      </div>
-                    </div>
-                    <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded bg-amber-400 text-slate-900">
-                      Non-Guru (Admin)
-                    </span>
-                  </div>
-                  <p className="text-[11px] text-slate-400 mt-2">
-                    Status terpisah dari guru: Pengendali penuh sistem, 33 kelas, pengaturan tahun ajaran, KOP rapor, dan manajemen database.
-                  </p>
-                </div>
-
-                {/* Guru Matematika Preset */}
-                {users[1] && (
-                  <div
-                    onClick={() => handleQuickLogin(users[1])}
-                    className="p-3.5 rounded-2xl bg-indigo-500/10 border border-indigo-500/30 hover:bg-indigo-500/20 hover:border-indigo-500/50 cursor-pointer transition-all group"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-lg bg-indigo-500 text-white flex items-center justify-center shadow-md">
-                          <BookOpen className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <h4 className="text-xs font-bold text-indigo-200 group-hover:text-indigo-100">
-                            {users[1].nama}
-                          </h4>
-                          <p className="text-[11px] font-mono text-slate-300">
-                            NIP: {users[1].nip} • Pass: guru123
-                          </p>
-                        </div>
-                      </div>
-                      <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-indigo-400 text-slate-900">
-                        Guru Mapel
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-400 mt-2">
-                      Guru Mapel: <strong>Matematika</strong> (11 Kelas VII: VII-A s.d VII-K). Input nilai praktis & cepat.
-                    </p>
-                  </div>
-                )}
-
-                {/* Guru Bahasa Indonesia Preset */}
-                {users[2] && (
-                  <div
-                    onClick={() => handleQuickLogin(users[2])}
-                    className="p-3.5 rounded-2xl bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 hover:border-blue-500/50 cursor-pointer transition-all group"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2.5">
-                        <div className="w-8 h-8 rounded-lg bg-blue-500 text-white flex items-center justify-center shadow-md">
-                          <BookOpen className="w-4 h-4" />
-                        </div>
-                        <div>
-                          <h4 className="text-xs font-bold text-blue-200 group-hover:text-blue-100">
-                            {users[2].nama}
-                          </h4>
-                          <p className="text-[11px] font-mono text-slate-300">
-                            NIP: {users[2].nip} • Pass: guru123
-                          </p>
-                        </div>
-                      </div>
-                      <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-blue-400 text-slate-900">
-                        Guru Mapel
-                      </span>
-                    </div>
-                    <p className="text-[11px] text-slate-400 mt-2">
-                      Guru Mapel: <strong>Bahasa Indonesia</strong> (Lintas Kelas VII, VIII, IX).
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Feature Highlights */}
-            <div className="bg-slate-800/40 rounded-2xl p-4 border border-slate-700/60 text-xs text-slate-300 space-y-2">
-              <div className="flex items-center gap-2 text-indigo-300 font-semibold">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>33 Kelas Lengkap (Kelas VII-A s.d IX-K)</span>
-              </div>
-              <div className="flex items-center gap-2 text-indigo-300 font-semibold">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>11 Mata Pelajaran Resmi (PAIBP, PPKN, BIND, MTK, IPA, IPS, BING, INF, PJOK, SENI, MULOK)</span>
-              </div>
-              <div className="flex items-center gap-2 text-indigo-300 font-semibold">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                <span>Rekapitulasi Otomatis 3 Bulanan, Leger Nilai & Cetak Rapor Standar</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
