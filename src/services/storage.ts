@@ -124,9 +124,21 @@ export const StorageService = {
     SupabaseService.syncClasses(classes).catch(() => {});
   },
 
-  // Subjects (11 Subjects)
+  // Subjects (11 Subjects - Seluruhnya Kelompok A & Muatan Lokal)
   getSubjects: (): Subject[] => {
-    return getStored<Subject[]>(STORAGE_KEYS.SUBJECTS, INITIAL_SUBJECTS);
+    const list = getStored<Subject[]>(STORAGE_KEYS.SUBJECTS, INITIAL_SUBJECTS);
+    let updated = false;
+    const normalized = list.map(s => {
+      if ((s.kelompok as string) === 'Kelompok B (Umum)' || (s.kelompok as string) === 'Kelompok B') {
+        updated = true;
+        return { ...s, kelompok: 'Kelompok A (Umum)' as const };
+      }
+      return s;
+    });
+    if (updated) {
+      setStored(STORAGE_KEYS.SUBJECTS, normalized);
+    }
+    return normalized;
   },
   saveSubjects: (subjects: Subject[]) => {
     setStored(STORAGE_KEYS.SUBJECTS, subjects);
@@ -136,6 +148,19 @@ export const StorageService = {
   // Users (Super Admin & Guru Mapel)
   getUsers: (): UserAccount[] => {
     let list = getStored<UserAccount[]>(STORAGE_KEYS.USERS, INITIAL_USERS);
+
+    // Hapus akun contoh guru jika masih tersimpan di localStorage browser
+    const sampleGuruIds = [
+      'user-guru-mtk', 'user-guru-bindo', 'user-guru-ipa', 'user-guru-infor',
+      'user-guru-paibp', 'user-guru-ppkn', 'user-guru-bing', 'user-guru-ips',
+      'user-guru-pjok', 'user-guru-seni', 'user-guru-mulok'
+    ];
+    const filtered = list.filter(u => !sampleGuruIds.includes(u.id));
+    if (filtered.length !== list.length) {
+      list = filtered;
+      setStored(STORAGE_KEYS.USERS, list);
+    }
+
     // Ensure Super Admin has Username: Superadmin and Password: Superadmin
     const adminIndex = list.findIndex(u => u.role === 'SUPER_ADMIN' || u.id === 'user-admin');
     if (adminIndex !== -1) {
@@ -163,23 +188,41 @@ export const StorageService = {
     SupabaseService.syncUsers(users).catch(() => {});
   },
 
-  // Current logged in user
+  // Current logged in user (Sesi aktif disimpan per tab/session browser)
   getCurrentUser: (): UserAccount | null => {
-    const user = getStored<UserAccount | null>(STORAGE_KEYS.CURRENT_USER, INITIAL_USERS[0]);
-    if (user && (user.role === 'SUPER_ADMIN' || user.id === 'user-admin')) {
-      return {
-        ...user,
-        nip: 'Superadmin',
-        username: 'Superadmin',
-        password: 'Superadmin',
-        role: 'SUPER_ADMIN',
-        nama: user.nama === 'H. Bambang Suryono, M.Pd.' ? 'Super Administrator' : user.nama
-      };
-    }
-    return user;
+    try {
+      const sessionRaw = sessionStorage.getItem(STORAGE_KEYS.CURRENT_USER);
+      if (sessionRaw) {
+        const user = JSON.parse(sessionRaw);
+        if (user) {
+          if (user.role === 'SUPER_ADMIN' || user.id === 'user-admin') {
+            return {
+              ...user,
+              nip: 'Superadmin',
+              username: 'Superadmin',
+              password: 'Superadmin',
+              role: 'SUPER_ADMIN',
+              nama: user.nama === 'H. Bambang Suryono, M.Pd.' ? 'Super Administrator' : user.nama
+            };
+          }
+          return user;
+        }
+      }
+    } catch {}
+
+    // Default ke null agar saat link dibuka langsung ke halaman Login
+    return null;
   },
   setCurrentUser: (user: UserAccount | null) => {
-    setStored(STORAGE_KEYS.CURRENT_USER, user);
+    try {
+      if (user) {
+        sessionStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+        localStorage.setItem(STORAGE_KEYS.CURRENT_USER, JSON.stringify(user));
+      } else {
+        sessionStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+        localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+      }
+    } catch {}
   },
 
   // Authentication by Username / NIP / NUPTK & Password
@@ -188,10 +231,14 @@ export const StorageService = {
     const cleanPass = pass.trim();
     const users = StorageService.getUsers();
 
-    // Khusus Akun Super Admin Terpisah
+    // Khusus Akun Super Admin Terpisah (Mendukung Username 'Superadmin' atau NIP)
     if (cleanId === 'superadmin' || cleanId === '197901012005011001') {
       const admin = users.find(u => u.role === 'SUPER_ADMIN' || u.id === 'user-admin') || INITIAL_USERS[0];
-      if (cleanPass === 'Superadmin' || cleanPass === admin.password || cleanPass === 'admin123') {
+      if (
+        cleanPass.toLowerCase() === 'superadmin' ||
+        cleanPass === admin.password ||
+        cleanPass === 'admin123'
+      ) {
         const activeAdmin: UserAccount = {
           ...admin,
           id: 'user-admin',
@@ -226,7 +273,10 @@ export const StorageService = {
   },
 
   logout: () => {
-    localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+    try {
+      sessionStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+      localStorage.removeItem(STORAGE_KEYS.CURRENT_USER);
+    } catch {}
   },
 
   // Students

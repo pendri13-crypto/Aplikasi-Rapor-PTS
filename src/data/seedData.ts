@@ -5,28 +5,28 @@ export const DEFAULT_LOGO_PEMDA = `data:image/svg+xml;utf8,<svg xmlns="http://ww
 export const DEFAULT_LOGO_SEKOLAH = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><path d="M50,8 L85,25 L85,60 C85,78 50,92 50,92 C50,92 15,78 15,60 L15,25 Z" fill="%230f766e" stroke="%23fbbf24" stroke-width="3"/><path d="M50,30 L70,42 L50,54 L30,42 Z" fill="%23ffffff"/><path d="M30,48 L50,60 L70,48 L70,55 L50,67 L30,55 Z" fill="%23fbbf24"/><circle cx="50" cy="24" r="5" fill="%23fbbf24"/></svg>`;
 
 export const INITIAL_SCHOOL_SETTINGS: SchoolSettings = {
-  namaSekolah: 'SMP NEGERI 1 CEMERLANG',
-  npsn: '20234567',
-  alamatSekolah: 'Jl. Ki Hajar Dewantara No. 45',
-  kelurahan: 'Sukamaju',
-  kecamatan: 'Cemerlang',
-  kabupatenKota: 'Kota Cemerlang',
+  namaSekolah: 'SMPN 1 RAJAPOLAH',
+  npsn: '20210846',
+  alamatSekolah: 'Jln. Kebon Kalapa No. 48 Manggungjaya',
+  kelurahan: 'Manggungjaya',
+  kecamatan: 'Rajapolah',
+  kabupatenKota: 'Kab. Tasikmalaya',
   provinsi: 'Jawa Barat',
-  kodePos: '40123',
-  telepon: '(022) 7654321',
-  email: 'smpn1cemerlang@sch.id',
-  namaKepalaSekolah: 'Dr. H. Mulyadi Saputra, M.Pd.',
-  nipKepalaSekolah: '196803121992031004',
-  tahunAjaran: '2024/2025',
+  kodePos: '46153',
+  telepon: '(0265) 420212',
+  email: 'smpn1rajapolah@sch.id',
+  namaKepalaSekolah: 'H. Ucu Karni, M.Pd.',
+  nipKepalaSekolah: '1967111619931005',
+  tahunAjaran: '2026/2027',
   semesterAktif: 'Ganjil',
   namaPeriodePTS: 'Penilaian Tengah Semester (PTS) Ganjil',
-  tanggalRapor: '4 Oktober 2024',
-  tempatRapor: 'Cemerlang',
+  tanggalRapor: '9 Oktober 2026',
+  tempatRapor: 'Kab. Tasikmalaya',
   logoPemdaUrl: DEFAULT_LOGO_PEMDA,
   logoSekolahUrl: DEFAULT_LOGO_SEKOLAH,
-  bobotFormatif: 30,
-  bobotUH: 30,
-  bobotPTS: 40,
+  bobotFormatif: 0,
+  bobotUH: 0,
+  bobotPTS: 100,
   kkmDefault: 75,
 };
 
@@ -40,8 +40,8 @@ export const INITIAL_SUBJECTS: Subject[] = [
   { id: 'IPS', kode: 'IPS', nama: 'IPS', kkm: 75, kelompok: 'Kelompok A (Umum)', urutan: 6 },
   { id: 'BING', kode: 'BING', nama: 'Bahasa Inggris', kkm: 75, kelompok: 'Kelompok A (Umum)', urutan: 7 },
   { id: 'INFOR', kode: 'INF', nama: 'Informatika', kkm: 75, kelompok: 'Kelompok A (Umum)', urutan: 8 },
-  { id: 'PJOK', kode: 'PJOK', nama: 'PJOK', kkm: 75, kelompok: 'Kelompok B (Umum)', urutan: 9 },
-  { id: 'SENI', kode: 'SBD', nama: 'Seni Budaya', kkm: 75, kelompok: 'Kelompok B (Umum)', urutan: 10 },
+  { id: 'PJOK', kode: 'PJOK', nama: 'PJOK', kkm: 75, kelompok: 'Kelompok A (Umum)', urutan: 9 },
+  { id: 'SENI', kode: 'SBD', nama: 'Seni Budaya', kkm: 75, kelompok: 'Kelompok A (Umum)', urutan: 10 },
   { id: 'MULOK', kode: 'MLK', nama: 'Mulok Bahasa Daerah', kkm: 75, kelompok: 'Muatan Lokal', urutan: 11 },
 ];
 
@@ -80,7 +80,7 @@ export const INITIAL_CLASSES: SchoolClass[] = (() => {
         nama: `Kelas ${tingkat}-${kode}`,
         waliKelasNama: waliName,
         waliKelasNip: waliNip,
-        tahunAjaran: '2024/2025',
+        tahunAjaran: '2026/2027',
         semester: 'Ganjil',
         fase: 'D'
       });
@@ -90,7 +90,7 @@ export const INITIAL_CLASSES: SchoolClass[] = (() => {
   return classes;
 })();
 
-// Daftar Akun Pengguna (Super Admin & Guru Mapel)
+// Daftar Akun Pengguna (Hanya Super Admin, akun guru ditambahkan melalui Data Master)
 export const INITIAL_USERS: UserAccount[] = [
   {
     id: 'user-admin',
@@ -100,135 +100,8 @@ export const INITIAL_USERS: UserAccount[] = [
     role: 'SUPER_ADMIN',
     assignedClassIds: INITIAL_CLASSES.map(c => c.id), // Seluruh 33 kelas
     password: 'Superadmin',
-    email: 'superadmin@smpn1cemerlang.sch.id',
+    email: 'superadmin@smpn1rajapolah.sch.id',
     noHp: '081234567890'
-  },
-  {
-    id: 'user-guru-mtk',
-    nip: '198205142008012015',
-    nama: 'Dra. Siti Nurhaliza',
-    role: 'GURU_MAPEL',
-    mapelId: 'MTK',
-    mapelName: 'Matematika',
-    assignedClassIds: ['VII-A', 'VII-B', 'VII-C', 'VII-D', 'VII-E', 'VII-F', 'VII-G', 'VII-H', 'VII-I', 'VII-J', 'VII-K'],
-    password: 'guru123',
-    email: 'siti.nurhaliza@smpn1cemerlang.sch.id',
-    isWaliKelas: true,
-    waliKelasId: 'VII-A'
-  },
-  {
-    id: 'user-guru-bindo',
-    nip: '198603202011011003',
-    nama: 'Budi Santoso, S.Pd.',
-    role: 'GURU_MAPEL',
-    mapelId: 'BINDO',
-    mapelName: 'Bahasa Indonesia',
-    assignedClassIds: ['VII-A', 'VII-B', 'VII-C', 'VII-D', 'VII-E', 'VIII-A', 'VIII-B', 'VIII-C', 'IX-A', 'IX-B'],
-    password: 'guru123',
-    email: 'budi.santoso@smpn1cemerlang.sch.id',
-    isWaliKelas: true,
-    waliKelasId: 'VII-B'
-  },
-  {
-    id: 'user-guru-ipa',
-    nip: '198911082014022004',
-    nama: 'Rina Marlina, M.Pd.',
-    role: 'GURU_MAPEL',
-    mapelId: 'IPA',
-    mapelName: 'IPA',
-    assignedClassIds: ['VIII-A', 'VIII-B', 'VIII-C', 'VIII-D', 'VIII-E', 'VIII-F', 'VIII-G', 'VIII-H', 'VIII-I', 'VIII-J', 'VIII-K'],
-    password: 'guru123',
-    email: 'rina.marlina@smpn1cemerlang.sch.id',
-    isWaliKelas: true,
-    waliKelasId: 'VIII-A'
-  },
-  {
-    id: 'user-guru-infor',
-    nip: '199204122019031008',
-    nama: 'Hendra Wijaya, S.Kom.',
-    role: 'GURU_MAPEL',
-    mapelId: 'INFOR',
-    mapelName: 'Informatika',
-    assignedClassIds: ['VII-A', 'VII-B', 'VIII-A', 'VIII-B', 'IX-A', 'IX-B', 'IX-C', 'IX-D', 'IX-E', 'IX-F', 'IX-G', 'IX-H', 'IX-I', 'IX-J', 'IX-K'],
-    password: 'guru123',
-    email: 'hendra.wijaya@smpn1cemerlang.sch.id'
-  },
-  {
-    id: 'user-guru-paibp',
-    nip: '198407222009021005',
-    nama: 'Ust. Ahmad Dahlan, S.Ag.',
-    role: 'GURU_MAPEL',
-    mapelId: 'PAIBP',
-    mapelName: 'PAIBP',
-    assignedClassIds: ['VII-A', 'VII-B', 'VII-C', 'VII-D', 'VII-E', 'VII-F', 'VII-G', 'VII-H', 'VII-I', 'VII-J', 'VII-K'],
-    password: 'guru123',
-    email: 'ahmad.dahlan@smpn1cemerlang.sch.id'
-  },
-  {
-    id: 'user-guru-ppkn',
-    nip: '198708172010012009',
-    nama: 'Tri Wahyuni, S.Pd.',
-    role: 'GURU_MAPEL',
-    mapelId: 'PPKN',
-    mapelName: 'PPKN',
-    assignedClassIds: ['VII-A', 'VII-B', 'VII-C', 'VII-D', 'VII-E', 'VII-F'],
-    password: 'guru123',
-    email: 'tri.wahyuni@smpn1cemerlang.sch.id'
-  },
-  {
-    id: 'user-guru-bing',
-    nip: '199002152015032006',
-    nama: 'Dewi Anggraini, S.Pd.',
-    role: 'GURU_MAPEL',
-    mapelId: 'BING',
-    mapelName: 'Bahasa Inggris',
-    assignedClassIds: ['VII-A', 'VII-B', 'VII-C', 'VII-D', 'VII-E', 'VIII-A', 'VIII-B'],
-    password: 'guru123',
-    email: 'dewi.anggraini@smpn1cemerlang.sch.id'
-  },
-  {
-    id: 'user-guru-ips',
-    nip: '198306102008011012',
-    nama: 'Drs. Joko Prasetyo',
-    role: 'GURU_MAPEL',
-    mapelId: 'IPS',
-    mapelName: 'IPS',
-    assignedClassIds: ['VII-A', 'VII-B', 'VII-C', 'VII-D', 'VII-E'],
-    password: 'guru123',
-    email: 'joko.prasetyo@smpn1cemerlang.sch.id'
-  },
-  {
-    id: 'user-guru-pjok',
-    nip: '198810282012011007',
-    nama: 'Agus Setiawan, S.Pd. Jas.',
-    role: 'GURU_MAPEL',
-    mapelId: 'PJOK',
-    mapelName: 'PJOK',
-    assignedClassIds: ['VII-A', 'VII-B', 'VII-C', 'VII-D', 'VII-E'],
-    password: 'guru123',
-    email: 'agus.setiawan@smpn1cemerlang.sch.id'
-  },
-  {
-    id: 'user-guru-seni',
-    nip: '199105022018022003',
-    nama: 'Maya Indah Sari, S.Sn.',
-    role: 'GURU_MAPEL',
-    mapelId: 'SENI',
-    mapelName: 'Seni Budaya',
-    assignedClassIds: ['VII-A', 'VII-B', 'VII-C', 'VII-D', 'VII-E'],
-    password: 'guru123',
-    email: 'maya.indah@smpn1cemerlang.sch.id'
-  },
-  {
-    id: 'user-guru-mulok',
-    nip: '198509192011022008',
-    nama: 'Neneng Solihat, S.Pd.',
-    role: 'GURU_MAPEL',
-    mapelId: 'MULOK',
-    mapelName: 'Mulok Bahasa Daerah',
-    assignedClassIds: ['VII-A', 'VII-B', 'VII-C', 'VII-D', 'VII-E'],
-    password: 'guru123',
-    email: 'neneng.solihat@smpn1cemerlang.sch.id'
   }
 ];
 
@@ -388,7 +261,7 @@ export const INITIAL_GRADES: GradeRecord[] = (() => {
           classId: student.classId,
           mapelId: subject.id,
           semester: 'Ganjil',
-          tahunAjaran: '2024/2025',
+          tahunAjaran: '2026/2027',
           triwulan: 1, // PTS 3 Bulanan
           nilaiTugas1: t1,
           nilaiTugas2: t2,

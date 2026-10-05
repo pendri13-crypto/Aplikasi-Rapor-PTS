@@ -22,9 +22,8 @@ export const RaporCetakModal: React.FC<RaporCetakModalProps> = ({
     window.print();
   };
 
-  // Group subjects by category
+  // Group subjects by category (Hanya Kelompok A dan Muatan Lokal)
   const kelA = subjects.filter(s => s.kelompok === 'Kelompok A (Umum)');
-  const kelB = subjects.filter(s => s.kelompok === 'Kelompok B (Umum)');
   const mulok = subjects.filter(s => s.kelompok === 'Muatan Lokal');
 
   return (
@@ -201,33 +200,10 @@ export const RaporCetakModal: React.FC<RaporCetakModalProps> = ({
                   );
                 })}
 
-                {/* Kelompok B */}
-                <tr className="bg-slate-50 font-bold text-[10px]">
-                  <td colSpan={6} className="border border-slate-400 py-1 px-2 uppercase text-slate-700">
-                    B. Kelompok Mata Pelajaran Keterampilan & Seni
-                  </td>
-                </tr>
-                {kelB.map((subj, idx) => {
-                  const rec = summary.grades[subj.id];
-                  const score = rec?.nilaiAkhir ?? '-';
-                  const predikat = rec?.predikat ?? '-';
-                  const capaian = rec?.capaianKompetensi ?? `Mengikuti proses pembelajaran mata pelajaran ${subj.nama}.`;
-                  return (
-                    <tr key={subj.id} className="border-b border-slate-300">
-                      <td className="border border-slate-300 py-1.5 px-2 text-center">{kelA.length + idx + 1}</td>
-                      <td className="border border-slate-300 py-1.5 px-3 font-semibold text-slate-900">{subj.nama}</td>
-                      <td className="border border-slate-300 py-1.5 px-2 text-center font-mono">{subj.kkm}</td>
-                      <td className="border border-slate-300 py-1.5 px-2 text-center font-bold font-mono">{score}</td>
-                      <td className="border border-slate-300 py-1.5 px-2 text-center font-bold">{predikat}</td>
-                      <td className="border border-slate-300 py-1.5 px-3 text-slate-700 leading-tight text-[10px]">{capaian}</td>
-                    </tr>
-                  );
-                })}
-
                 {/* Muatan Lokal */}
                 <tr className="bg-slate-50 font-bold text-[10px]">
                   <td colSpan={6} className="border border-slate-400 py-1 px-2 uppercase text-slate-700">
-                    C. Muatan Lokal
+                    B. Muatan Lokal
                   </td>
                 </tr>
                 {mulok.map((subj, idx) => {
@@ -237,7 +213,7 @@ export const RaporCetakModal: React.FC<RaporCetakModalProps> = ({
                   const capaian = rec?.capaianKompetensi ?? `Mengikuti proses pembelajaran muatan lokal ${subj.nama}.`;
                   return (
                     <tr key={subj.id} className="border-b border-slate-300">
-                      <td className="border border-slate-300 py-1.5 px-2 text-center">{kelA.length + kelB.length + idx + 1}</td>
+                      <td className="border border-slate-300 py-1.5 px-2 text-center">{kelA.length + idx + 1}</td>
                       <td className="border border-slate-300 py-1.5 px-3 font-semibold text-slate-900">{subj.nama}</td>
                       <td className="border border-slate-300 py-1.5 px-2 text-center font-mono">{subj.kkm}</td>
                       <td className="border border-slate-300 py-1.5 px-2 text-center font-bold font-mono">{score}</td>

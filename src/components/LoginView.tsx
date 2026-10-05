@@ -178,7 +178,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             </form>
 
             <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-              <span>Kurikulum Merdeka / K13 SMP</span>
+              <span>Kurikulum Merdeka</span>
               <span>v2.5 Official Release</span>
             </div>
           </div>
