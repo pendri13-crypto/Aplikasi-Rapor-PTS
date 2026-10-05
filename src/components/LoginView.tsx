@@ -30,6 +30,8 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
 
   const users = StorageService.getUsers();
   const settings = StorageService.getSettings();
+  const [logoError, setLogoError] = useState(false);
+  const schoolLogoUrl = settings.logoSekolahUrl || 'https://i.ibb.co.com/QvMS2L2J/LOGO-SEKOLAH-SMPN-1-RAJAPOLAH.png';
 
   const handleLogin = (e?: React.FormEvent) => {
     if (e) e.preventDefault();
@@ -75,8 +77,27 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       <div className="max-w-4xl mx-auto w-full relative z-10">
         {/* Header App */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-indigo-500 to-blue-500 text-white shadow-xl shadow-indigo-500/25 mb-4">
-            <GraduationCap className="w-9 h-9" />
+          <div className="inline-flex items-center justify-center mb-4">
+            <div className="relative group">
+              {/* Subtle ambient glow behind logo */}
+              <div className="absolute -inset-1.5 bg-gradient-to-r from-indigo-500/40 to-blue-500/40 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition duration-300" />
+
+              {/* Logo container */}
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white/95 backdrop-blur-md p-2 shadow-2xl shadow-indigo-500/30 border border-white/40 flex items-center justify-center overflow-hidden transition-transform duration-300 group-hover:scale-105">
+                {!logoError ? (
+                  <img
+                    src={schoolLogoUrl}
+                    alt={settings.namaSekolah || 'Logo SMPN 1 Rajapolah'}
+                    onError={() => setLogoError(true)}
+                    className={`w-full h-full object-contain filter drop-shadow-sm ${
+                      schoolLogoUrl.includes('LOGO-SEKOLAH') ? 'scale-[1.65]' : ''
+                    }`}
+                  />
+                ) : (
+                  <GraduationCap className="w-10 h-10 text-indigo-600" />
+                )}
+              </div>
+            </div>
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
             e-Rapor Penilaian Tengah Semester

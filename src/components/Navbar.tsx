@@ -132,9 +132,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="relative">
               <div className="w-10 h-10 rounded-2xl bg-white border border-slate-200/80 flex items-center justify-center p-1 shadow-sm ring-2 ring-white group-hover:scale-105 transition-transform duration-200 overflow-hidden">
                 <img
-                  src="https://i.ibb.co.com/rGJLMWct/LOGO-SEKOLAH-3-D-SMPN-1-RAJAPOLAH.png"
-                  alt="Logo SMPN 1 Rajapolah"
-                  className="w-full h-full object-contain drop-shadow-xs"
+                  src={settings.logoSekolahUrl || "https://i.ibb.co.com/QvMS2L2J/LOGO-SEKOLAH-SMPN-1-RAJAPOLAH.png"}
+                  alt={settings.namaSekolah || "Logo SMPN 1 Rajapolah"}
+                  className={`w-full h-full object-contain drop-shadow-xs ${
+                    (settings.logoSekolahUrl || "https://i.ibb.co.com/QvMS2L2J/LOGO-SEKOLAH-SMPN-1-RAJAPOLAH.png").includes('LOGO-SEKOLAH') ? 'scale-[1.65]' : ''
+                  }`}
                 />
               </div>
               {/* Little glowing accent dot */}

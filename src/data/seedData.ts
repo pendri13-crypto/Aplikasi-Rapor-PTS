@@ -2,7 +2,7 @@ import { SchoolClass, Subject, UserAccount, Student, GradeRecord, SchoolSettings
 
 export const DEFAULT_LOGO_PEMDA = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="46" fill="%231e3a8a" stroke="%23f59e0b" stroke-width="4"/><polygon points="50,15 62,38 88,40 68,58 74,84 50,70 26,84 32,58 12,40 38,38" fill="%23f59e0b"/><circle cx="50" cy="50" r="16" fill="%23ffffff"/><path d="M42,56 C42,48 58,48 58,56 Z M50,38 L50,47" stroke="%231e3a8a" stroke-width="3" fill="%23f59e0b"/></svg>`;
 
-export const DEFAULT_LOGO_SEKOLAH = 'https://i.ibb.co.com/rGJLMWct/LOGO-SEKOLAH-3-D-SMPN-1-RAJAPOLAH.png';
+export const DEFAULT_LOGO_SEKOLAH = 'https://i.ibb.co.com/QvMS2L2J/LOGO-SEKOLAH-SMPN-1-RAJAPOLAH.png';
 
 export const INITIAL_SCHOOL_SETTINGS: SchoolSettings = {
   namaSekolah: 'SMPN 1 RAJAPOLAH',
