@@ -69,10 +69,10 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-slate-100 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 text-slate-100 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 selection:bg-teal-500 selection:text-white">
       {/* Decorative background glows */}
-      <div className="absolute top-10 left-1/4 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-10 left-1/4 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-10 right-1/4 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-4xl mx-auto w-full relative z-10">
         {/* Header App */}
@@ -80,10 +80,10 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           <div className="inline-flex items-center justify-center mb-4">
             <div className="relative group">
               {/* Subtle ambient glow behind logo */}
-              <div className="absolute -inset-1.5 bg-gradient-to-r from-indigo-500/40 to-blue-500/40 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition duration-300" />
+              <div className="absolute -inset-1.5 bg-gradient-to-r from-teal-500/40 to-emerald-500/40 rounded-3xl blur-lg opacity-75 group-hover:opacity-100 transition duration-300" />
 
               {/* Logo container */}
-              <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white/95 backdrop-blur-md p-2 shadow-2xl shadow-indigo-500/30 border border-white/40 flex items-center justify-center overflow-hidden transition-transform duration-300 group-hover:scale-105">
+              <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-white/95 backdrop-blur-md p-2 shadow-2xl shadow-teal-500/30 border border-white/40 flex items-center justify-center overflow-hidden transition-transform duration-300 group-hover:scale-105">
                 {!logoError ? (
                   <img
                     src={schoolLogoUrl}
@@ -94,7 +94,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                     }`}
                   />
                 ) : (
-                  <GraduationCap className="w-10 h-10 text-indigo-600" />
+                  <GraduationCap className="w-10 h-10 text-teal-600" />
                 )}
               </div>
             </div>
@@ -105,7 +105,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           <p className="mt-2 text-sm sm:text-base text-slate-300 max-w-2xl mx-auto">
             Sistem Informasi Penilaian Tengah Semester (PTS/STS) SMP • 33 Kelas (VII-A s.d. IX-K)
           </p>
-          <div className="inline-flex items-center gap-2 mt-3 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-xs text-indigo-300">
+          <div className="inline-flex items-center gap-2 mt-3 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-xs text-teal-300">
             <School className="w-3.5 h-3.5" />
             <span>{settings.namaSekolah} • Tahun Ajaran {settings.tahunAjaran}</span>
           </div>
@@ -121,7 +121,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                   Masuk dengan nomor NIP (18 digit) atau NUPTK (16 digit)
                 </p>
               </div>
-              <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+              <div className="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600">
                 <KeyRound className="w-5 h-5" />
               </div>
             </div>
@@ -147,7 +147,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                     value={nip}
                     onChange={(e) => setNip(e.target.value)}
                     placeholder="Superadmin atau NIP Guru..."
-                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                    className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-mono text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                   />
                 </div>
                 <span className="text-[11px] text-slate-400 mt-1 block">
@@ -168,7 +168,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
+                    className="w-full pl-10 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all"
                   />
                   <button
                     type="button"
@@ -184,7 +184,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className="w-full py-3 px-4 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-2 transition-all disabled:opacity-70 active:scale-[0.99]"
+                  className="w-full py-3 px-4 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-700 hover:to-emerald-700 text-white font-bold text-sm rounded-xl shadow-lg shadow-teal-600/30 flex items-center justify-center gap-2 transition-all disabled:opacity-70 active:scale-[0.99]"
                 >
                   {isLoading ? (
                     <span className="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

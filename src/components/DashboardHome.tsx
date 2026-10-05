@@ -65,11 +65,12 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
       {/* Welcome Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900 p-6 sm:p-8 text-white shadow-xl">
-        <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-teal-950 to-emerald-950 p-6 sm:p-8 text-white shadow-xl border border-teal-900/40">
+        <div className="absolute right-0 top-0 translate-x-10 -translate-y-10 w-96 h-96 bg-teal-500/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute left-1/3 bottom-0 translate-y-10 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
         
         <div className="relative z-10 max-w-3xl">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold text-indigo-200 border border-white/10 mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-semibold text-teal-200 border border-white/10 mb-4">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" />
             <span>{settings.namaPeriodePTS} • Triwulan 1</span>
           </div>
@@ -93,7 +94,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <button
               onClick={() => onNavigate('input-nilai')}
-              className="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md shadow-indigo-600/30 transition-all flex items-center gap-2"
+              className="px-4 py-2.5 bg-gradient-to-r from-teal-600 to-emerald-600 hover:from-teal-500 hover:to-emerald-500 text-white rounded-xl text-xs sm:text-sm font-bold shadow-lg shadow-teal-950/40 transition-all flex items-center gap-2 active:scale-95"
             >
               <BookOpen className="w-4 h-4" />
               <span>Input Nilai PTS Sekarang</span>
@@ -124,11 +125,11 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
               Total Kelas
             </p>
             <h3 className="text-2xl font-black text-slate-900 mt-1">33 Kelas</h3>
-            <p className="text-xs text-indigo-600 font-semibold mt-0.5">
+            <p className="text-xs text-teal-600 font-semibold mt-0.5">
               11 VII • 11 VIII • 11 IX (A - K)
             </p>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center">
             <GraduationCap className="w-6 h-6" />
           </div>
         </div>
@@ -143,7 +144,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
               PAIBP, PPKN, BINDO, MTK, dst.
             </p>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+          <div className="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
             <BookOpen className="w-6 h-6" />
           </div>
         </div>
@@ -171,7 +172,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
             <h3 className="text-2xl font-black text-slate-900 mt-1">{completedSlots} / {totalSlotsNeeded}</h3>
             <div className="w-28 bg-slate-100 rounded-full h-2 mt-2 overflow-hidden">
               <div
-                className="bg-indigo-600 h-2 rounded-full transition-all duration-500"
+                className="bg-gradient-to-r from-teal-600 to-emerald-500 h-2 rounded-full transition-all duration-500"
                 style={{ width: `${progressPercent}%` }}
               />
             </div>
@@ -188,7 +189,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
           <div>
             <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
               <span>Daftar 33 Kelas SMP</span>
-              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-teal-50 text-teal-700 border border-teal-200">
                 Lengkap A s.d K
               </span>
             </h2>
@@ -205,7 +206,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
                 onClick={() => setTingkatFilter('ALL')}
                 className={`px-3 py-1.5 rounded-lg transition-all ${
                   tingkatFilter === 'ALL'
-                    ? 'bg-white text-indigo-700 shadow-xs'
+                    ? 'bg-white text-teal-700 shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -215,7 +216,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
                 onClick={() => setTingkatFilter('VII')}
                 className={`px-3 py-1.5 rounded-lg transition-all ${
                   tingkatFilter === 'VII'
-                    ? 'bg-white text-indigo-700 shadow-xs'
+                    ? 'bg-white text-teal-700 shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -225,7 +226,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
                 onClick={() => setTingkatFilter('VIII')}
                 className={`px-3 py-1.5 rounded-lg transition-all ${
                   tingkatFilter === 'VIII'
-                    ? 'bg-white text-indigo-700 shadow-xs'
+                    ? 'bg-white text-teal-700 shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -235,7 +236,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
                 onClick={() => setTingkatFilter('IX')}
                 className={`px-3 py-1.5 rounded-lg transition-all ${
                   tingkatFilter === 'IX'
-                    ? 'bg-white text-indigo-700 shadow-xs'
+                    ? 'bg-white text-teal-700 shadow-xs'
                     : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
@@ -250,7 +251,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
                 placeholder="Cari kelas / wali..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 w-44"
+                className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 w-44"
               />
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
             </div>
@@ -271,11 +272,11 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
             return (
               <div
                 key={item.id}
-                className="p-4 rounded-2xl border border-slate-200 bg-white hover:border-indigo-300 hover:shadow-md transition-all group relative flex flex-col justify-between"
+                className="p-4 rounded-2xl border border-slate-200 bg-white hover:border-teal-300 hover:shadow-md transition-all group relative flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-base font-black text-slate-900 group-hover:text-indigo-600 transition-colors">
+                    <span className="text-base font-black text-slate-900 group-hover:text-teal-600 transition-colors">
                       {item.nama}
                     </span>
                     <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
@@ -298,7 +299,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
 
                   <div className="mt-3 flex items-center justify-between text-xs text-slate-500">
                     <span>{classStudents.length} Siswa</span>
-                    <span className="text-indigo-600 font-semibold text-[11px]">
+                    <span className="text-teal-600 font-semibold text-[11px]">
                       Kurikulum Merdeka
                     </span>
                   </div>
@@ -307,7 +308,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
                   <div className="w-full bg-slate-100 rounded-full h-1.5 mt-2 overflow-hidden">
                     <div
                       className={`h-1.5 rounded-full ${
-                        filledMapelsCount === 11 ? 'bg-emerald-500' : 'bg-indigo-600'
+                        filledMapelsCount === 11 ? 'bg-emerald-500' : 'bg-teal-600'
                       }`}
                       style={{ width: `${Math.round((filledMapelsCount / 11) * 100)}%` }}
                     />
@@ -317,7 +318,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
                 <div className="mt-4 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2">
                   <button
                     onClick={() => onNavigate('input-nilai', item.id)}
-                    className="w-full py-1.5 px-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 rounded-lg text-xs font-bold transition-colors text-center"
+                    className="w-full py-1.5 px-2 bg-teal-50 hover:bg-teal-100 text-teal-700 rounded-lg text-xs font-bold transition-colors text-center"
                   >
                     Input Nilai
                   </button>
@@ -343,7 +344,7 @@ export const DashboardHome: React.FC<DashboardHomeProps> = ({
       {/* Information Box on 3-Month PTS Calculation */}
       <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 sm:p-7">
         <h3 className="text-sm font-bold text-slate-900 mb-2 flex items-center gap-2">
-          <Clock className="w-4 h-4 text-indigo-600" />
+          <Clock className="w-4 h-4 text-teal-600" />
           <span>Mekanisme Penilaian Tengah Semester (PTS) / 3 Bulanan</span>
         </h3>
         <p className="text-xs text-slate-600 leading-relaxed max-w-4xl">
