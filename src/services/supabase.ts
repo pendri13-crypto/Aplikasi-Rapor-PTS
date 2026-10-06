@@ -647,9 +647,7 @@ export const SupabaseService = {
       console.warn('Failed to pull from Supabase:', err);
       return null;
     }
-  },
-
-  // Delete students from Supabase (specific class or all)
+  },  // Delete students from Supabase (specific class or all)
   deleteStudentsFromSupabase: async (classId?: string): Promise<{ success: boolean; message: string }> => {
     try {
       if (classId && classId !== 'ALL') {
@@ -673,3 +671,55 @@ export const SupabaseService = {
     }
   },
 
+  // Delete teachers from Supabase (keep Super Admin)
+  deleteTeachersFromSupabase: async (): Promise<{ success: boolean; message: string }> => {
+    try {
+      const { error } = await supabase
+        .from('user_accounts')
+        .delete()
+        .neq('role', 'SUPER_ADMIN')
+        .neq('nip', 'Superadmin');
+      if (error) throw error;
+      return { success: true, message: 'Seluruh akun guru mapel berhasil dihapus dari Supabase.' };
+    } catch (err: any) {
+      console.warn('Error deleting teachers from Supabase:', err);
+      return { success: false, message: err?.message || 'Gagal menghapus data guru dari Supabase.' };
+    }
+  },
+
+  // Delete classes from Supabase
+  deleteClassesFromSupabase: async (): Promise<{ success: boolean; message: string }> => {
+    try {
+      const { error } = await supabase.from('classes').delete().neq('id', '___non_existent___');
+      if (error) throw error;
+      return { success: true, message: 'Seluruh data kelas berhasil dihapus dari Supabase.' };
+    } catch (err: any) {
+      console.warn('Error deleting classes from Supabase:', err);
+      return { success: false, message: err?.message || 'Gagal menghapus data kelas dari Supabase.' };
+    }
+  },
+
+  // Delete all data in Supabase Cloud
+  deleteAllDataFromSupabase: async (scope: 'all' | 'grades_only' = 'all'): Promise<{ success: boolean; message: string }> => {
+    try {
+      if (scope === 'grades_only') {
+        const { error: gErr } = await supabase.from('grade_records').delete().neq('id', '___non_existent___');
+        if (gErr) throw gErr;
+        return { success: true, message: 'Seluruh nilai berhasil dihapus dari database Supabase.' };
+      }
+
+      // Delete grades, attendance, students, teachers
+      await Promise.allSettled([
+        supabase.from('grade_records').delete().neq('id', '___non_existent___'),
+        supabase.from('attendance_records').delete().neq('id', '___non_existent___'),
+        supabase.from('students').delete().neq('id', '___non_existent___'),
+        supabase.from('user_accounts').delete().neq('role', 'SUPER_ADMIN').neq('nip', 'Superadmin'),
+      ]);
+
+      return { success: true, message: 'Seluruh data (nilai, siswa, akun guru) berhasil dibersihkan dari Supabase Cloud.' };
+    } catch (err: any) {
+      console.warn('Error deleting from Supabase:', err);
+      return { success: false, message: err?.message || 'Gagal menghapus data dari Supabase.' };
+    }
+  }
+};
