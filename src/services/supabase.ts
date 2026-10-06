@@ -400,7 +400,102 @@ export const SupabaseService = {
     }
   },
 
-  // Pull All Remote Data from Supabase if available
+  // Helper to fetch all rows in chunks of 1000 to bypass PostgREST limit
+  fetchAllRows: async <T = any>(table: string, orderColumn?: string): Promise<T[]> => {
+    let all: T[] = [];
+    let from = 0;
+    const pageSize = 1000;
+    while (true) {
+      let query = supabase.from(table).select('*').range(from, from + pageSize - 1);
+      if (orderColumn) {
+        query = query.order(orderColumn, { ascending: true });
+      }
+      const { data, error } = await query;
+      if (error) {
+        console.warn(`Error fetching ${table} at offset ${from}:`, error.message);
+        break;
+      }
+      if (!data || data.length === 0) break;
+      all = all.concat(data as T[]);
+      if (data.length < pageSize) break;
+      from += pageSize;
+    }
+    return all;
+  },
+
+  // Query user directly from Supabase by NIP or username
+  getUserByCredentials: async (identifier: string): Promise<UserAccount | null> => {
+    try {
+      const cleanId = identifier.trim().toLowerCase();
+      const { data, error } = await supabase
+        .from('user_accounts')
+        .select('*')
+        .ilike('nip', cleanId)
+        .limit(1)
+        .maybeSingle();
+
+      if (error || !data) return null;
+      return {
+        id: data.id,
+        nip: data.nip,
+        username: data.username || (data.nip === 'Superadmin' ? 'Superadmin' : undefined),
+        nama: data.nama,
+        role: data.role,
+        mapelId: data.mapel_id,
+        mapelName: data.mapel_name,
+        assignedClassIds: data.assigned_class_ids || [],
+        password: data.password,
+        email: data.email,
+        noHp: data.no_hp,
+        isWaliKelas: data.is_wali_kelas,
+        waliKelasId: data.wali_kelas_id
+      };
+    } catch (err) {
+      console.warn('getUserByCredentials error:', err);
+      return null;
+    }
+  },
+
+  // Fetch grades specifically for a class and mapel
+  fetchGradesForClassAndMapel: async (classId: string, mapelId: string): Promise<GradeRecord[]> => {
+    try {
+      const { data, error } = await supabase
+        .from('grade_records')
+        .select('*')
+        .eq('class_id', classId)
+        .eq('mapel_id', mapelId);
+
+      if (error || !data) return [];
+      return data.map((g: any) => ({
+        id: g.id,
+        studentId: g.student_id,
+        classId: g.class_id,
+        mapelId: g.mapel_id,
+        semester: g.semester,
+        tahunAjaran: g.tahun_ajaran,
+        triwulan: g.triwulan,
+        nilaiTugas1: Number(g.nilai_tugas1) || 0,
+        nilaiTugas2: Number(g.nilai_tugas2) || 0,
+        nilaiTugas3: Number(g.nilai_tugas3) || 0,
+        nilaiFormatifAvg: Number(g.nilai_formatif_avg) || 0,
+        nilaiUH1: Number(g.nilai_uh1) || 0,
+        nilaiUH2: Number(g.nilai_uh2) || 0,
+        nilaiSumatifMateriAvg: Number(g.nilai_sumatif_materi_avg) || 0,
+        nilaiPTS: Number(g.nilai_pts) || 0,
+        nilaiAkhir: Number(g.nilai_akhir) || 0,
+        predikat: g.predikat,
+        keterangan: g.keterangan,
+        capaianKompetensi: g.capaian_kompetensi,
+        updatedAt: g.updated_at,
+        updatedBy: g.updated_by
+      }));
+    } catch (err) {
+      console.warn('fetchGradesForClassAndMapel error:', err);
+      return [];
+    }
+  },
+
+  // Pull All Remote Data from Supabase with full pagination
   pullFromSupabase: async (): Promise<{
     settings?: SchoolSettings;
     grades?: GradeRecord[];
@@ -408,16 +503,18 @@ export const SupabaseService = {
     users?: UserAccount[];
     classes?: SchoolClass[];
     subjects?: Subject[];
+    attendance?: AttendanceRecord[];
   } | null> => {
     try {
-      const [resSettings, resGrades, resStudents, resUsers, resClasses, resSubjects] =
+      const [resSettings, resClasses, resSubjects, resUsers, rawStudents, rawGrades, rawAttendance] =
         await Promise.allSettled([
           supabase.from('school_settings').select('*').limit(1).maybeSingle(),
-          supabase.from('grade_records').select('*'),
-          supabase.from('students').select('*'),
-          supabase.from('user_accounts').select('*'),
           supabase.from('classes').select('*'),
-          supabase.from('subjects').select('*').order('urutan', { ascending: true })
+          supabase.from('subjects').select('*').order('urutan', { ascending: true }),
+          supabase.from('user_accounts').select('*'),
+          SupabaseService.fetchAllRows('students', 'nis'),
+          SupabaseService.fetchAllRows('grade_records'),
+          SupabaseService.fetchAllRows('attendance_records')
         ]);
 
       const result: any = {};
@@ -449,8 +546,33 @@ export const SupabaseService = {
         };
       }
 
-      if (resGrades.status === 'fulfilled' && resGrades.value.data && resGrades.value.data.length > 0) {
-        result.grades = resGrades.value.data.map((g: any) => ({
+      if (resClasses.status === 'fulfilled' && resClasses.value.data && resClasses.value.data.length > 0) {
+        result.classes = resClasses.value.data.map((c: any) => ({
+          id: c.id,
+          tingkat: c.tingkat,
+          kode: c.kode,
+          nama: c.nama,
+          waliKelasNama: c.wali_kelas_nama || '',
+          waliKelasNip: c.wali_kelas_nip || '',
+          tahunAjaran: c.tahun_ajaran || '2026/2027',
+          semester: c.semester || 'Ganjil',
+          fase: c.fase || 'D'
+        }));
+      }
+
+      if (resSubjects.status === 'fulfilled' && resSubjects.value.data && resSubjects.value.data.length > 0) {
+        result.subjects = resSubjects.value.data.map((sub: any) => ({
+          id: sub.id,
+          kode: sub.kode,
+          nama: sub.nama,
+          kkm: sub.kkm,
+          kelompok: sub.kelompok,
+          urutan: sub.urutan
+        }));
+      }
+
+      if (rawGrades.status === 'fulfilled' && rawGrades.value && rawGrades.value.length > 0) {
+        result.grades = rawGrades.value.map((g: any) => ({
           id: g.id,
           studentId: g.student_id,
           classId: g.class_id,
@@ -475,8 +597,8 @@ export const SupabaseService = {
         }));
       }
 
-      if (resStudents.status === 'fulfilled' && resStudents.value.data && resStudents.value.data.length > 0) {
-        result.students = resStudents.value.data.map((st: any) => ({
+      if (rawStudents.status === 'fulfilled' && rawStudents.value && rawStudents.value.length > 0) {
+        result.students = rawStudents.value.map((st: any) => ({
           id: st.id,
           nis: st.nis,
           nisn: st.nisn,
@@ -494,6 +616,7 @@ export const SupabaseService = {
         result.users = resUsers.value.data.map((u: any) => ({
           id: u.id,
           nip: u.nip,
+          username: u.username || (u.nip === 'Superadmin' ? 'Superadmin' : undefined),
           nama: u.nama,
           role: u.role,
           mapelId: u.mapel_id,
@@ -507,6 +630,18 @@ export const SupabaseService = {
         }));
       }
 
+      if (rawAttendance.status === 'fulfilled' && rawAttendance.value && rawAttendance.value.length > 0) {
+        result.attendance = rawAttendance.value.map((a: any) => ({
+          id: a.id,
+          studentId: a.student_id,
+          classId: a.class_id,
+          sakit: Number(a.sakit) || 0,
+          izin: Number(a.izin) || 0,
+          alpa: Number(a.alpa) || 0,
+          catatanWaliKelas: a.catatan_wali_kelas || ''
+        }));
+      }
+
       return result;
     } catch (err) {
       console.warn('Failed to pull from Supabase:', err);
@@ -514,27 +649,27 @@ export const SupabaseService = {
     }
   },
 
-  // Delete all data in Supabase Cloud
-  deleteAllDataFromSupabase: async (scope: 'all' | 'grades_only' = 'all'): Promise<{ success: boolean; message: string }> => {
+  // Delete students from Supabase (specific class or all)
+  deleteStudentsFromSupabase: async (classId?: string): Promise<{ success: boolean; message: string }> => {
     try {
-      if (scope === 'grades_only') {
-        const { error: gErr } = await supabase.from('grade_records').delete().neq('id', '___non_existent___');
-        if (gErr) throw gErr;
-        return { success: true, message: 'Seluruh nilai berhasil dihapus dari database Supabase.' };
+      if (classId && classId !== 'ALL') {
+        await Promise.allSettled([
+          supabase.from('grade_records').delete().eq('class_id', classId),
+          supabase.from('attendance_records').delete().eq('class_id', classId),
+          supabase.from('students').delete().eq('class_id', classId),
+        ]);
+        return { success: true, message: `Data siswa kelas ${classId} berhasil dihapus dari Supabase.` };
       }
 
-      // Delete grades, attendance, students
       await Promise.allSettled([
         supabase.from('grade_records').delete().neq('id', '___non_existent___'),
         supabase.from('attendance_records').delete().neq('id', '___non_existent___'),
         supabase.from('students').delete().neq('id', '___non_existent___'),
-        supabase.from('user_accounts').delete().neq('id', 'user-admin'), // keep admin
       ]);
-
-      return { success: true, message: 'Seluruh data (nilai, siswa, akun guru) berhasil dibersihkan dari Supabase Cloud.' };
+      return { success: true, message: 'Seluruh data siswa berhasil dihapus dari Supabase.' };
     } catch (err: any) {
-      console.warn('Error deleting from Supabase:', err);
-      return { success: false, message: err?.message || 'Gagal menghapus data dari Supabase.' };
+      console.warn('Error deleting students from Supabase:', err);
+      return { success: false, message: err?.message || 'Gagal menghapus data siswa dari Supabase.' };
     }
-  }
-};
+  },
+

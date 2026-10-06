@@ -16,6 +16,21 @@ export default function App() {
   const [selectedClassId, setSelectedClassId] = useState<string>('VII-A');
   const [selectedMapelId, setSelectedMapelId] = useState<string>('PAIBP');
 
+  // Auto-sync cloud data from Supabase on application load
+  useEffect(() => {
+    StorageService.initCloudSync();
+
+    const handleSync = () => {
+      const refreshed = StorageService.getCurrentUser();
+      if (refreshed) {
+        setCurrentUser(refreshed);
+      }
+    };
+
+    window.addEventListener('erapor_data_synced', handleSync);
+    return () => window.removeEventListener('erapor_data_synced', handleSync);
+  }, []);
+
   // Handle user logout
   const handleLogout = () => {
     StorageService.logout();

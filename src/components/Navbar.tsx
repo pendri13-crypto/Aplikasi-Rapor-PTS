@@ -42,10 +42,34 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const [supabaseConnected, setSupabaseConnected] = useState<boolean | null>(null);
   const [pingLatency, setPingLatency] = useState<number | null>(null);
-  
+  const [isManualSyncing, setIsManualSyncing] = useState(false);
+  const [syncFeedback, setSyncFeedback] = useState<string | null>(null);
+
   const dropdownRef = useRef<HTMLDivElement>(null);
-  const users = StorageService.getUsers();
-  const settings = StorageService.getSettings();
+  const [users, setUsers] = useState<UserAccount[]>(() => StorageService.getUsers());
+  const [settings, setSettings] = useState(() => StorageService.getSettings());
+
+  const handleManualSync = async () => {
+    setIsManualSyncing(true);
+    setSyncFeedback('Sinkronisasi...');
+    try {
+      const res = await StorageService.pullFromSupabase();
+      if (res.success) {
+        setUsers(StorageService.getUsers());
+        setSettings(StorageService.getSettings());
+        setSyncFeedback('Tersinkron!');
+        setTimeout(() => setSyncFeedback(null), 2500);
+      } else {
+        setSyncFeedback('Gagal');
+        setTimeout(() => setSyncFeedback(null), 2500);
+      }
+    } catch {
+      setSyncFeedback('Gagal');
+      setTimeout(() => setSyncFeedback(null), 2500);
+    } finally {
+      setIsManualSyncing(false);
+    }
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -123,10 +147,10 @@ export const Navbar: React.FC<NavbarProps> = ({
     <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-xl border-b border-slate-200/80 shadow-[0_1px_3px_rgba(0,0,0,0.03)] print:hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 gap-3">
-          
+
           {/* Brand & School Info */}
-          <div 
-            className="flex items-center gap-3 cursor-pointer group shrink-0" 
+          <div
+            className="flex items-center gap-3 cursor-pointer group shrink-0"
             onClick={() => setActiveTab('dashboard')}
           >
             <div className="relative">
@@ -134,9 +158,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <img
                   src={settings.logoSekolahUrl || "https://i.ibb.co.com/QvMS2L2J/LOGO-SEKOLAH-SMPN-1-RAJAPOLAH.png"}
                   alt={settings.namaSekolah || "Logo SMPN 1 Rajapolah"}
-                  className={`w-full h-full object-contain drop-shadow-xs ${
-                    (settings.logoSekolahUrl || "https://i.ibb.co.com/QvMS2L2J/LOGO-SEKOLAH-SMPN-1-RAJAPOLAH.png").includes('LOGO-SEKOLAH') ? 'scale-[1.65]' : ''
-                  }`}
+                  className={`w-full h-full object-contain drop-shadow-xs ${(settings.logoSekolahUrl || "https://i.ibb.co.com/QvMS2L2J/LOGO-SEKOLAH-SMPN-1-RAJAPOLAH.png").includes('LOGO-SEKOLAH') ? 'scale-[1.65]' : ''}`}
                 />
               </div>
               {/* Little glowing accent dot */}
@@ -167,11 +189,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                 <button
                   key={item.id}
                   onClick={() => setActiveTab(item.id)}
-                  className={`relative flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 ${
-                    isActive
-                      ? 'bg-white text-teal-700 shadow-xs font-extrabold ring-1 ring-slate-900/5'
-                      : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'
-                  }`}
+                  className={`relative flex items-center gap-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all duration-200 ${isActive ? 'bg-white text-teal-700 shadow-xs font-extrabold ring-1 ring-slate-900/5' : 'text-slate-600 hover:text-slate-900 hover:bg-white/50'}`}
                 >
                   <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-teal-600' : 'text-slate-400'}`} />
                   <span>{item.label}</span>
@@ -182,51 +200,40 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Right Area: Supabase Pill & Profile Button */}
           <div className="flex items-center gap-2 sm:gap-3">
-            
-            {/* Supabase Status Pill */}
+
+            {/* Supabase Status & Cloud Sync Button */}
             <button
-              onClick={() => setActiveTab('pengaturan')}
-              title={`Database Supabase: ${SUPABASE_URL}`}
-              className={`hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all border ${
-                supabaseConnected
-                  ? 'bg-emerald-50/80 text-emerald-700 border-emerald-200/80 hover:bg-emerald-100/80'
-                  : supabaseConnected === false
-                  ? 'bg-rose-50/80 text-rose-700 border-rose-200/80'
-                  : 'bg-slate-100 text-slate-600 border-slate-200'
-              }`}
+              onClick={handleManualSync}
+              disabled={isManualSyncing}
+              title={`Klik untuk sinkronisasi data terbaru dengan Cloud Supabase (${SUPABASE_URL})`}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold transition-all border ${supabaseConnected ? 'bg-emerald-50/80 text-emerald-700 border-emerald-200/80 hover:bg-emerald-100 active:scale-95' : supabaseConnected === false ? 'bg-rose-50/80 text-rose-700 border-rose-200/80' : 'bg-slate-100 text-slate-600 border-slate-200'}`}
             >
               <span className="relative flex h-2 w-2">
-                {supabaseConnected && (
+                {supabaseConnected && !isManualSyncing && (
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
                 )}
-                <span className={`relative inline-flex rounded-full h-2 w-2 ${
-                  supabaseConnected ? 'bg-emerald-500' : supabaseConnected === false ? 'bg-rose-500' : 'bg-slate-400'
-                }`} />
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${supabaseConnected ? 'bg-emerald-500' : supabaseConnected === false ? 'bg-rose-500' : 'bg-slate-400'}`} />
               </span>
-              <span className="font-medium">Supabase</span>
-              {pingLatency && (
+              <span className="font-medium">
+                {syncFeedback || (isManualSyncing ? 'Sinkron...' : 'Cloud Sync')}
+              </span>
+              {isManualSyncing ? (
+                <span className="inline-block w-3 h-3 border-2 border-emerald-600 border-t-transparent rounded-full animate-spin" />
+              ) : pingLatency ? (
                 <span className="text-[10px] opacity-75 font-mono">
                   {pingLatency}ms
                 </span>
-              )}
+              ) : null}
             </button>
 
             {/* Profile & Role Switcher Button */}
             <div className="relative" ref={dropdownRef}>
               <button
                 onClick={() => setShowUserDropdown(!showUserDropdown)}
-                className={`flex items-center gap-2.5 p-1.5 sm:px-3 sm:py-1.5 rounded-2xl border transition-all text-left ${
-                  showUserDropdown
-                    ? 'border-teal-300 bg-teal-50/50 shadow-sm ring-2 ring-teal-500/10'
-                    : 'border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/80 shadow-2xs'
-                }`}
+                className={`flex items-center gap-2.5 p-1.5 sm:px-3 sm:py-1.5 rounded-2xl border transition-all text-left ${showUserDropdown ? 'border-teal-300 bg-teal-50/50 shadow-sm ring-2 ring-teal-500/10' : 'border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/80 shadow-2xs'}`}
               >
                 {/* Role Avatar */}
-                <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-xs ${
-                  currentUser?.role === 'SUPER_ADMIN'
-                    ? 'bg-gradient-to-tr from-amber-500 to-amber-600'
-                    : 'bg-gradient-to-tr from-teal-600 to-emerald-600'
-                }`}>
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-white text-xs font-bold shadow-xs ${currentUser?.role === 'SUPER_ADMIN' ? 'bg-gradient-to-tr from-amber-500 to-amber-600' : 'bg-gradient-to-tr from-teal-600 to-emerald-600'}`}>
                   {currentUser?.role === 'SUPER_ADMIN' ? (
                     <Shield className="w-4 h-4" />
                   ) : (
@@ -240,11 +247,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <span className="text-xs font-bold text-slate-800 line-clamp-1 max-w-[120px]">
                       {currentUser?.nama?.split(',')[0]}
                     </span>
-                    <span className={`text-[9px] font-black uppercase px-1.5 py-0.2 rounded-md tracking-wider ${
-                      currentUser?.role === 'SUPER_ADMIN'
-                        ? 'bg-amber-100 text-amber-800 border border-amber-200/50'
-                        : 'bg-teal-100 text-teal-800 border border-teal-200/50'
-                    }`}>
+                    <span className={`text-[9px] font-black uppercase px-1.5 py-0.2 rounded-md tracking-wider ${currentUser?.role === 'SUPER_ADMIN' ? 'bg-amber-100 text-amber-800 border border-amber-200/50' : 'bg-teal-100 text-teal-800 border border-teal-200/50'}`}>
                       {currentUser?.role === 'SUPER_ADMIN' ? 'Admin' : 'Guru'}
                     </span>
                   </div>
@@ -253,24 +256,18 @@ export const Navbar: React.FC<NavbarProps> = ({
                   </span>
                 </div>
 
-                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${
-                  showUserDropdown ? 'rotate-180 text-teal-600' : ''
-                }`} />
+                <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${showUserDropdown ? 'rotate-180 text-teal-600' : ''}`} />
               </button>
 
               {/* Enhanced Dropdown Menu */}
               {showUserDropdown && (
                 <div className="absolute right-0 mt-2 w-84 bg-white rounded-3xl shadow-2xl border border-slate-200/90 p-3 z-50 animate-in fade-in zoom-in-95 duration-150">
-                  
+
                   {/* Active User Card */}
                   <div className="p-3 bg-gradient-to-br from-slate-900 via-teal-950 to-slate-900 rounded-2xl text-white mb-2 shadow-sm border border-teal-900/50">
                     <div className="flex items-start justify-between">
                       <div>
-                        <span className={`inline-block text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full mb-1.5 ${
-                          currentUser?.role === 'SUPER_ADMIN'
-                            ? 'bg-amber-400 text-slate-950'
-                            : 'bg-teal-400 text-slate-950'
-                        }`}>
+                        <span className={`inline-block text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full mb-1.5 ${currentUser?.role === 'SUPER_ADMIN' ? 'bg-amber-400 text-slate-950' : 'bg-teal-400 text-slate-950'}`}>
                           {currentUser?.role === 'SUPER_ADMIN' ? 'Super Admin (Non-Guru)' : `Guru ${currentUser?.mapelName}`}
                         </span>
                         <h4 className="font-bold text-xs leading-snug">{currentUser?.nama}</h4>
@@ -340,11 +337,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   setActiveTab(item.id);
                   setShowMobileMenu(false);
                 }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
-                  isActive
-                    ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs'
-                    : 'text-slate-700 hover:bg-slate-100'
-                }`}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${isActive ? 'bg-gradient-to-r from-teal-600 to-emerald-600 text-white shadow-xs' : 'text-slate-700 hover:bg-slate-100'}`}
               >
                 <Icon className={`w-4 h-4 ${isActive ? 'text-white' : 'text-slate-400'}`} />
                 <span>{item.label}</span>
@@ -371,11 +364,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             <button
               key={item.id}
               onClick={() => setActiveTab(item.id)}
-              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-bold transition-colors ${
-                isActive
-                  ? 'text-teal-600'
-                  : 'text-slate-500 hover:text-slate-800'
-              }`}
+              className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-bold transition-colors ${isActive ? 'text-teal-600' : 'text-slate-500 hover:text-slate-800'}`}
             >
               <div className={`p-1 rounded-lg transition-transform ${isActive ? 'bg-teal-50 scale-110' : ''}`}>
                 <Icon className="w-4 h-4" />
@@ -389,11 +378,7 @@ export const Navbar: React.FC<NavbarProps> = ({
         {currentUser?.role === 'SUPER_ADMIN' ? (
           <button
             onClick={() => setActiveTab('data-master')}
-            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-bold transition-colors ${
-              activeTab === 'data-master' || activeTab === 'pengaturan'
-                ? 'text-teal-600'
-                : 'text-slate-500 hover:text-slate-800'
-            }`}
+            className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-xl text-[10px] font-bold transition-colors ${(activeTab === 'data-master' || activeTab === 'pengaturan') ? 'text-teal-600' : 'text-slate-500 hover:text-slate-800'}`}
           >
             <div className={`p-1 rounded-lg transition-transform ${activeTab === 'data-master' || activeTab === 'pengaturan' ? 'bg-teal-50 scale-110' : ''}`}>
               <Settings className="w-4 h-4" />

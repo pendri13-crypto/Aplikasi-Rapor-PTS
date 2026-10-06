@@ -49,48 +49,126 @@ const KELAS_LETTERS: ('A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H' | 'I' | 'J' 
   'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'
 ];
 
-// Generator 33 Kelas (VII-A s.d IX-K)
+// Data Wali Kelas Resmi 33 Kelas SMPN 1 Rajapolah
+const WALI_KELAS_MAP: Record<string, [string, string]> = {
+  "IX-A": ["NANIK DWI ASTUTI, M.Pd","198106142009022005"],
+  "IX-B": ["WIDI RESTUTI, S.Pd","197303171998022002"],
+  "IX-C": ["IRA TRISTIAWATI, S.Kom","197805022021212001"],
+  "IX-D": ["MEY MEY TRI KUSDIANI, S.pd","199605162020122006"],
+  "IX-E": ["DEDE NURHAYATI, S.Pd","197901172008012006"],
+  "IX-F": ["RIDA RIDIAWATI, S.Pd","197403112006042010"],
+  "IX-G": ["SITI SAADAH, S.Pd","199109032024212030"],
+  "IX-H": ["KENDRA PERMANA, S.Pd","197006151997021004"],
+  "IX-I": ["IMAS HALIMAH, S.Pd","197609292002122002"],
+  "IX-J": ["ARIS SUNANDAR, S.Pd","199609022025211089"],
+  "IX-K": ["AI TARLIANI, S.Pd","196911121998022003"],
+  "VII-A": ["EDI DARWADI, S.Pd","197610012021211001"],
+  "VII-B": ["SAEPUL HAKIM, S.Pd","7555775676130202"],
+  "VII-C": ["RINA YULIANA, S.Pd","198112262014102002"],
+  "VII-D": ["RIKA MUDRIKA, S.H.I","198005102023212008"],
+  "VII-E": ["WIDYA IMARDHEA, S.Pd","7459777678230133"],
+  "VII-F": ["NENG AJENG AYU LESTARI, S.Pd","199810062024212017"],
+  "VII-G": ["ENUNG RIWAYATI, S.Pd","197209042007012006"],
+  "VII-H": ["MIFTAH SAEPUL ANWAR, S.Pd","199707012022211001"],
+  "VII-I": ["RENI NURAENI, S.Pd","197601012007012031"],
+  "VII-J": ["FAHMI MIFTAHULZAMAN, S.Pd","199902182024211010"],
+  "VII-K": ["Hj. ANI MARDIANI, S.Pd","196910162021212001"],
+  "VIII-A": ["HENI NUR AZIZAH, S.Pd","199701162025212120"],
+  "VIII-B": ["Hj. SRINANINGSIH, S.Pd","196911041995122004"],
+  "VIII-C": ["NENDEN SRI UTARI, S.Pd","198806052011012003"],
+  "VIII-D": ["PENDRI PRAYOGA, S.Kom","198808312022211005"],
+  "VIII-E": ["ANWAR MUSADAD, S.Pd.Kn.","196908201994121001"],
+  "VIII-F": ["Hj. YEYEH SOFIAH, S.Pd","196904101995122005"],
+  "VIII-G": ["ELIS KURNIATI, S.Pd","198102032024212007"],
+  "VIII-H": ["YONA MAHYA MAULANI, S.Pd","6844775676230252"],
+  "VIII-I": ["SANTI SRI RAHAYU, S.Pd","199108272025212137"],
+  "VIII-J": ["TARISNIYATI DARISMAN, S.Pd","198112022024212009"],
+  "VIII-K": ["CEPI ROMDONI FAJAR, S.Pd","198704272025211123"]
+};
+
+// Generator 33 Kelas Resmi SMPN 1 Rajapolah (VII-A s.d IX-K)
 export const INITIAL_CLASSES: SchoolClass[] = (() => {
   const classes: SchoolClass[] = [];
   const tingkatList: ('VII' | 'VIII' | 'IX')[] = ['VII', 'VIII', 'IX'];
 
-  const waliKelasSampleNames = [
-    'Dra. Siti Aminah', 'Budi Santoso, S.Pd.', 'Ahmad Fauzi, M.Pd.', 'Dewi Lestari, S.Pd.',
-    'Eko Prasetyo, S.Pd.', 'Fitri Handayani, M.Pd.', 'Gunawan Wibisono, S.Pd.', 'Hani Rahmawati, S.Pd.',
-    'Iskandar Muda, M.Pd.', 'Joko Susilo, S.Pd.', 'Kartika Sari, S.Pd.',
-    'Lukman Hakim, S.Pd.', 'Mira Damayanti, M.Pd.', 'Nanang Suryana, S.Pd.', 'Nurul Aini, S.Pd.',
-    'Oki Setiawan, S.Pd.', 'Pratiwi Kusuma, M.Pd.', 'Qori Anugerah, S.Pd.', 'Rian Hidayat, S.Pd.',
-    'Sinta Maulida, S.Pd.', 'Taufik Hidayat, M.Pd.', 'Ujang Suherman, S.Pd.',
-    'Vina Agustina, S.Pd.', 'Wahyu Widodo, M.Pd.', 'Yeni Marlina, S.Pd.', 'Zainal Abidin, S.Pd.',
-    'Andi Pratama, M.Pd.', 'Bella Safitri, S.Pd.', 'Cahyo Utomo, S.Pd.', 'Dina Maharani, S.Pd.',
-    'Erwin Syahputra, M.Pd.', 'Fajar Nugraha, S.Pd.', 'Gita Gutawa, S.Pd.'
-  ];
-
-  let nameIndex = 0;
   for (const tingkat of tingkatList) {
     for (const kode of KELAS_LETTERS) {
       const classId = `${tingkat}-${kode}`;
-      const waliName = waliKelasSampleNames[nameIndex % waliKelasSampleNames.length];
-      const waliNip = `198${(70 + (nameIndex % 15)).toString()}0${(1 + (nameIndex % 9)).toString()}15201001${(1000 + nameIndex).toString().slice(1)}`;
-      
+      const wali = WALI_KELAS_MAP[classId] || ['', ''];
       classes.push({
         id: classId,
         tingkat,
         kode,
         nama: `Kelas ${tingkat}-${kode}`,
-        waliKelasNama: waliName,
-        waliKelasNip: waliNip,
-        tahunAjaran: '2024/2025',
+        waliKelasNama: wali[0],
+        waliKelasNip: wali[1],
+        tahunAjaran: '2026/2027',
         semester: 'Ganjil',
         fase: 'D'
       });
-      nameIndex++;
     }
   }
   return classes;
 })();
 
-// Daftar Akun Pengguna (Hanya Super Admin, akun guru ditambahkan melalui Data Master)
+// Data 53 Guru Resmi SMPN 1 Rajapolah [NIP, Nama, MapelId, MapelName, AssignedClasses]
+const TEACHER_LIST: [string, string, string, string, string[]][] = [
+  ["196712271990022002","ADE IPIN SUPRIATIN, S.Pd","MTK","Matematika",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196612071991032005","AI NURLINA, S.Pd","BINDO","Bahasa Indonesia",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196911121998022003","AI TARLIANI, S.Pd","IPA","IPA",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["197812232009021003","ANAS NURDIN, S.Pd","PJOK","PJOK",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196908201994121001","ANWAR MUSADAD, S.Pd.Kn.","PPKN","PPKN",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["199609022025211089","ARIS SUNANDAR, S.Pd","BK","Bimbingan Konseling",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["197012122005011005","ASEP FATHURROHMAN, S.Ag.","PAIBP","PAIBP",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["197006081997022001","BEAH RUBAEAH","BINDO","Bahasa Indonesia",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["198704272025211123","CEPI ROMDONI FAJAR, S.Pd","PJOK","PJOK",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["198107302011011002","CEPIANA ABAS, S.Pd.,M.Pd","BINGG","Bahasa Inggris",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["197901172008012006","DEDE NURHAYATI, S.Pd","MTK","Matematika",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196901161992031009","DIDI SADRI USMAN, S.Pd","IPA","IPA",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196707211995012001","Dra. Hj. TETI ROHDIATI, M.Pd.","IPS","IPS",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196610241993031006","Drs. PEPEN SARIP EPENDI","MULOK","Mulok Bahasa Daerah",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["197610012021211001","EDI DARWADI, S.Pd","PJOK","PJOK",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["198102032024212007","ELIS KURNIATI, S.Pd","SBD","Seni Budaya",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["197209042007012006","ENUNG RIWAYATI, S.Pd","BINDO","Bahasa Indonesia",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196808241991032003","ENUNG WASILAH, S.Pd","IPA","IPA",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196812301998022002","ERNE RIYANAWATI, S.Pd","BINGG","Bahasa Inggris",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["199902182024211010","FAHMI MIFTAHULZAMAN, S.Pd","PPKN","PPKN",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["199711082025211091","FAUZAN ILHAM, S.Pd","PJOK","PJOK",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196807101998021002","H. BASAR, S.Ag., MM.Pd.","PAIBP","PAIBP",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196904101991031006","H. TATANG SUDANAWAN, S.Pd","MTK","Matematika",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196808131991011001","H. YUSUF NURJAMAN, S.Pd.,M.M","MTK","Matematika",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196801011992031015","HARID HARYAMAN, S.Pd.Fis.","IPA","IPA",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["199701162025212120","HENI NUR AZIZAH, S.Pd","PAIBP","PAIBP",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196910162021212001","Hj. ANI MARDIANI, S.Pd","BINDO","Bahasa Indonesia",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196911041995122004","Hj. SRINANINGSIH, S.Pd","BINGG","Bahasa Inggris",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196904101995122005","Hj. YEYEH SOFIAH, S.Pd","IPS","IPS",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196905081994122004","IMAS AMALIA, S.Pd.Mat.","MTK","Matematika",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["197609292002122002","IMAS HALIMAH, S.Pd","IPA","IPA",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["197805022021212001","IRA TRISTIAWATI, S.Kom","INF","Informatika",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["197006151997021004","KENDRA PERMANA, S.Pd","PPKN","PPKN",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["198307232009022004","LINA LESTARI, S.Pd","IPS","IPS",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["2543769669110002","M. GALIH GULIGAH, S.Kom","INF","Informatika",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["196812141992031003","MAMAT RAHMAT, S.Pd","BK","BK",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["199605162020122006","MEY MEY TRI KUSDIANI, S.pd","SBD","Seni Budaya",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["199707012022211001","MIFTAH SAEPUL ANWAR, S.Pd","SBD","Seni Budaya",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["198106142009022005","NANIK DWI ASTUTI, M.Pd","BINGG","Bahasa Inggris",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["198806052011012003","NENDEN SRI UTARI, S.Pd","MULOK","Mulok Bahasa Daerah",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["199810062024212017","NENG AJENG AYU LESTARI, S.Pd","BK","Bimbingan Konseling",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["198808312022211005","PENDRI PRAYOGA, S.Kom","INF","Mata Pelajaran",["VII-J","VII-K","VIII-A","VIII-B","VIII-C","VIII-D","VIII-E","VIII-F","VIII-G","VIII-H","VIII-I","VIII-J","VIII-K"]],
+  ["197601012007012031","RENI NURAENI, S.Pd","BINGG","Bahasa Inggris",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["197403112006042010","RIDA RIDIAWATI, S.Pd","BINDO","Bahasa Indonesia",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["198005102023212008","RIKA MUDRIKA, S.H.I","PAIBP","PAIBP",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["198112262014102002","RINA YULIANA, S.Pd","PPKN","PPKN",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["7555775676130202","SAEPUL HAKIM, S.Pd","IPS","IPS",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["199108272025212137","SANTI SRI RAHAYU, S.Pd","IPS","IPS",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["199109032024212030","SITI SAADAH, S.Pd","BINDO","Bahasa Indonesia",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["198112022024212009","TARISNIYATI DARISMAN, S.Pd","IPA","IPA",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["197303171998022002","WIDI RESTUTI, S.Pd","IPA","IPA",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["7459777678230133","WIDYA IMARDHEA, S.Pd","SBD","Seni Budaya",["VII-A","VII-B","VII-C","VII-D","VII-E"]],
+  ["6844775676230252","YONA MAHYA MAULANI, S.Pd","BINDO","Bahasa Indonesia",["VII-A","VII-B","VII-C","VII-D","VII-E"]]
+];
+
+// Daftar Akun Pengguna Bawaan (Super Admin + 53 Guru Mapel Resmi)
 export const INITIAL_USERS: UserAccount[] = [
   {
     id: 'user-admin',
@@ -98,89 +176,28 @@ export const INITIAL_USERS: UserAccount[] = [
     username: 'Superadmin',
     nama: 'Super Administrator',
     role: 'SUPER_ADMIN',
-    assignedClassIds: INITIAL_CLASSES.map(c => c.id), // Seluruh 33 kelas
+    assignedClassIds: INITIAL_CLASSES.map(c => c.id),
     password: 'Superadmin',
     email: 'superadmin@smpn1cemerlang.sch.id',
     noHp: '081234567890'
-  }
+  },
+  ...TEACHER_LIST.map(([nip, nama, mapelId, mapelName, assignedClassIds]) => ({
+    id: `user-guru-${nip}`,
+    nip,
+    nama,
+    role: 'GURU_MAPEL' as const,
+    mapelId,
+    mapelName,
+    assignedClassIds,
+    password: 'guru123',
+    isWaliKelas: Object.values(WALI_KELAS_MAP).some(w => w[1] === nip)
+  }))
 ];
 
-// Template nama siswa Indonesia yang realistis
-const SAMPLE_STUDENT_NAMES = [
-  { nama: 'Achmad Rizky Pratama', jk: 'L' },
-  { nama: 'Adinda Putri Maharani', jk: 'P' },
-  { nama: 'Aisyah Nur Ramadhani', jk: 'P' },
-  { nama: 'Aldi Bagus Wicaksono', jk: 'L' },
-  { nama: 'Alif Kurniawan Santoso', jk: 'L' },
-  { nama: 'Annisa Fitriani', jk: 'P' },
-  { nama: 'Bagas Aditya Nugraha', jk: 'L' },
-  { nama: 'Cantika Dewi Lestari', jk: 'P' },
-  { nama: 'Dimas Arya Pamungkas', jk: 'L' },
-  { nama: 'Dinda Ayu Safitri', jk: 'P' },
-  { nama: 'Fajar Maulana Malik', jk: 'L' },
-  { nama: 'Farhan Nur Hidayat', jk: 'L' },
-  { nama: 'Ghina Salsabila', jk: 'P' },
-  { nama: 'Haikal Zaidan Akbar', jk: 'L' },
-  { nama: 'Intan Permata Sari', jk: 'P' },
-  { nama: 'Kevin Jonathan Siregar', jk: 'L' },
-  { nama: 'Larasati Prameswari', jk: 'P' },
-  { nama: 'Muhammad Bilal Ramadhan', jk: 'L' },
-  { nama: 'Nabila Azzahra Putri', jk: 'P' },
-  { nama: 'Rafi Al Ghifari', jk: 'L' },
-  { nama: 'Salma Khairunnisa', jk: 'P' },
-  { nama: 'Taufiqurrahman', jk: 'L' },
-  { nama: 'Vania Aurelia Wijaya', jk: 'P' },
-  { nama: 'Zahra Amelia Cahyani', jk: 'P' },
-  { nama: 'Zidan Maulana Yusuf', jk: 'L' },
-];
+export const INITIAL_STUDENTS: Student[] = [];
+export const INITIAL_ATTENDANCE: AttendanceRecord[] = [];
+export const INITIAL_GRADES: GradeRecord[] = [];
 
-// Generator Data Siswa untuk 33 Kelas
-export const INITIAL_STUDENTS: Student[] = (() => {
-  const students: Student[] = [];
-  let globalStudentCount = 1;
-
-  for (const c of INITIAL_CLASSES) {
-    // Generate 15-20 siswa per kelas untuk kenyamanan performa browser dan kelengkapan data
-    const studentCount = 16;
-    for (let i = 0; i < studentCount; i++) {
-      const sample = SAMPLE_STUDENT_NAMES[i % SAMPLE_STUDENT_NAMES.length];
-      const paddedId = globalStudentCount.toString().padStart(4, '0');
-      const nis = `24${c.tingkat === 'VII' ? '25' : c.tingkat === 'VIII' ? '24' : '23'}${paddedId}`;
-      const nisn = `00${7 + (globalStudentCount % 3)}${paddedId.padStart(7, '0')}`;
-      
-      students.push({
-        id: `std-${c.id}-${i + 1}`,
-        nis,
-        nisn,
-        nama: `${sample.nama} ${c.kode}`,
-        jenisKelamin: sample.jk as 'L' | 'P',
-        classId: c.id,
-        tempatLahir: 'Cemerlang',
-        tanggalLahir: '2011-05-15',
-        namaWali: `Wali ${sample.nama.split(' ')[0]}`,
-        alamat: `Jl. Melati No. ${i + 1}, Cemerlang`
-      });
-      globalStudentCount++;
-    }
-  }
-
-  return students;
-})();
-
-// Generator Attendance Initial
-export const INITIAL_ATTENDANCE: AttendanceRecord[] = INITIAL_STUDENTS.map(s => {
-  const hash = s.id.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-  return {
-    studentId: s.id,
-    classId: s.classId,
-    sakit: (hash % 7 === 0) ? 1 : (hash % 13 === 0) ? 2 : 0,
-    izin: (hash % 11 === 0) ? 1 : 0,
-    alpa: (hash % 19 === 0) ? 1 : 0,
-    catatanWaliKelas: 'Tingkatkan terus keaktifan belajar dan pertahankan prestasi yang sudah diraih.'
-  };
-});
-
-// Helper hitung predikat & capaian kompetensi
 export function calculateGradeDerived(
   formatif: number,
   uh: number,
@@ -218,69 +235,3 @@ export function calculateGradeDerived(
 
   return { nilaiAkhir, predikat, keterangan, capaianKompetensi };
 }
-
-// Generate Realistic Seed Grades untuk kelas awal (VII-A, VII-B, VIII-A, IX-A) agar rekap langsung hidup
-export const INITIAL_GRADES: GradeRecord[] = (() => {
-  const records: GradeRecord[] = [];
-  const focusClasses = ['VII-A', 'VII-B', 'VIII-A', 'IX-A'];
-
-  for (const classId of focusClasses) {
-    const classStudents = INITIAL_STUDENTS.filter(s => s.classId === classId);
-    
-    for (const student of classStudents) {
-      for (const subject of INITIAL_SUBJECTS) {
-        // Base seed from student ID + subject ID
-        const hash = (student.id + subject.id).split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
-        // Base score between 68 and 96
-        const baseScore = 72 + (hash % 24);
-        const t1 = Math.min(100, Math.max(60, baseScore + ((hash % 7) - 3)));
-        const t2 = Math.min(100, Math.max(60, baseScore + ((hash % 9) - 4)));
-        const t3 = Math.min(100, Math.max(60, baseScore + ((hash % 5) - 2)));
-        const formatifAvg = Math.round((t1 + t2 + t3) / 3);
-
-        const uh1 = Math.min(100, Math.max(55, baseScore + ((hash % 11) - 5)));
-        const uh2 = Math.min(100, Math.max(55, baseScore + ((hash % 6) - 3)));
-        const sumatifMateriAvg = Math.round((uh1 + uh2) / 2);
-
-        const pts = Math.min(100, Math.max(50, baseScore + ((hash % 13) - 6)));
-
-        const derived = calculateGradeDerived(
-          formatifAvg,
-          sumatifMateriAvg,
-          pts,
-          subject.kkm,
-          INITIAL_SCHOOL_SETTINGS.bobotFormatif,
-          INITIAL_SCHOOL_SETTINGS.bobotUH,
-          INITIAL_SCHOOL_SETTINGS.bobotPTS,
-          subject.nama
-        );
-
-        records.push({
-          id: `grd-${student.id}-${subject.id}`,
-          studentId: student.id,
-          classId: student.classId,
-          mapelId: subject.id,
-          semester: 'Ganjil',
-          tahunAjaran: '2024/2025',
-          triwulan: 1, // PTS 3 Bulanan
-          nilaiTugas1: t1,
-          nilaiTugas2: t2,
-          nilaiTugas3: t3,
-          nilaiFormatifAvg: formatifAvg,
-          nilaiUH1: uh1,
-          nilaiUH2: uh2,
-          nilaiSumatifMateriAvg: sumatifMateriAvg,
-          nilaiPTS: pts,
-          nilaiAkhir: derived.nilaiAkhir,
-          predikat: derived.predikat,
-          keterangan: derived.keterangan as 'Tuntas' | 'Perlu Bimbingan',
-          capaianKompetensi: derived.capaianKompetensi,
-          updatedAt: new Date().toISOString(),
-          updatedBy: 'Sistem'
-        });
-      }
-    }
-  }
-
-  return records;
-})();

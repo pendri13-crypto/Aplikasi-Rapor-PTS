@@ -82,6 +82,59 @@ export const StorageService = {
     return { success: true, message: 'Seluruh data siswa, presensi, dan nilai telah berhasil dihapus.' };
   },
 
+  // Clear/Hapus Data Siswa (per kelas atau seluruh 33 kelas)
+  clearStudents: async (classId?: string, syncSupabase: boolean = true): Promise<{ success: boolean; message: string }> => {
+    if (classId && classId !== 'ALL') {
+      const allStudents = StorageService.getStudents();
+      const updatedStudents = allStudents.filter(s => s.classId !== classId);
+      setStored(STORAGE_KEYS.STUDENTS, updatedStudents);
+
+      const allGrades = getStored<GradeRecord[]>(STORAGE_KEYS.GRADES, []);
+      const updatedGrades = allGrades.filter(g => g.classId !== classId);
+      setStored(STORAGE_KEYS.GRADES, updatedGrades);
+
+      const allAtt = getStored<AttendanceRecord[]>(STORAGE_KEYS.ATTENDANCE, []);
+      const updatedAtt = allAtt.filter(a => a.classId !== classId);
+      setStored(STORAGE_KEYS.ATTENDANCE, updatedAtt);
+
+      if (syncSupabase) {
+        await SupabaseService.deleteStudentsFromSupabase(classId);
+      }
+      return { success: true, message: `Data siswa & nilai untuk kelas ${classId} berhasil dihapus.` };
+    }
+
+    setStored(STORAGE_KEYS.STUDENTS, []);
+    setStored(STORAGE_KEYS.GRADES, []);
+    setStored(STORAGE_KEYS.ATTENDANCE, []);
+
+    if (syncSupabase) {
+      await SupabaseService.deleteStudentsFromSupabase();
+    }
+    return { success: true, message: 'Seluruh data siswa (33 kelas) beserta nilai telah berhasil dihapus.' };
+  },
+
+  // Clear/Hapus Data Akun Guru Mapel (Super Admin selalu dipertahankan)
+  clearTeachers: async (syncSupabase: boolean = true): Promise<{ success: boolean; message: string }> => {
+    const users = StorageService.getUsers();
+    const adminUser = users.find(u => u.role === 'SUPER_ADMIN') || INITIAL_USERS[0];
+    setStored(STORAGE_KEYS.USERS, [adminUser]);
+
+    if (syncSupabase) {
+      await SupabaseService.deleteTeachersFromSupabase();
+    }
+    return { success: true, message: 'Seluruh akun guru mapel berhasil dihapus. Akun Super Admin tetap aman.' };
+  },
+
+  // Clear/Hapus Data Kelas
+  clearClasses: async (syncSupabase: boolean = true): Promise<{ success: boolean; message: string }> => {
+    setStored(STORAGE_KEYS.CLASSES, []);
+
+    if (syncSupabase) {
+      await SupabaseService.deleteClassesFromSupabase();
+    }
+    return { success: true, message: 'Seluruh data kelas berhasil dihapus.' };
+  },
+
   // Clear/Hapus Semua Data Total (Nilai, Siswa, Guru Tambahan)
   clearAllData: async (syncSupabase: boolean = true): Promise<{ success: boolean; message: string }> => {
     setStored(STORAGE_KEYS.GRADES, []);
@@ -225,13 +278,13 @@ export const StorageService = {
     } catch {}
   },
 
-  // Authentication by Username / NIP / NUPTK & Password
-  login: (identifier: string, pass: string): { success: boolean; user?: UserAccount; message?: string } => {
+  // Authentication by Username / NIP / NUPTK & Password (Offline-first with real-time Supabase cloud fallback)
+  login: async (identifier: string, pass: string): Promise<{ success: boolean; user?: UserAccount; message?: string }> => {
     const cleanId = identifier.trim().toLowerCase();
     const cleanPass = pass.trim();
     const users = StorageService.getUsers();
 
-    // Khusus Akun Super Admin Terpisah (Mendukung Username 'Superadmin' atau NIP)
+    // 1. Khusus Akun Super Admin Terpisah (Mendukung Username 'Superadmin' atau NIP)
     if (cleanId === 'superadmin' || cleanId === '197901012005011001') {
       const admin = users.find(u => u.role === 'SUPER_ADMIN' || u.id === 'user-admin') || INITIAL_USERS[0];
       if (
@@ -249,26 +302,63 @@ export const StorageService = {
           role: 'SUPER_ADMIN'
         };
         StorageService.setCurrentUser(activeAdmin);
+        // Background sync to ensure admin has latest database
+        StorageService.initCloudSync(true).catch(() => {});
         return { success: true, user: activeAdmin };
       } else {
         return { success: false, message: 'Password Superadmin salah. Silakan masukkan password: Superadmin' };
       }
     }
 
-    // Akun Guru Mapel (berdasarkan NIP / NUPTK)
-    const found = users.find(u =>
+    // 2. Akun Guru Mapel: Periksa Local Storage terlebih dahulu
+    let found = users.find(u =>
       u.nip.toLowerCase() === cleanId ||
       (u.username && u.username.toLowerCase() === cleanId)
     );
 
+    // 3. Jika akun belum ada di local browser, langsung periksa ke Cloud Supabase!
+    if (!found) {
+      try {
+        const cloudUser = await SupabaseService.getUserByCredentials(cleanId);
+        if (cloudUser) {
+          found = cloudUser;
+          // Simpan/perbarui ke daftar user lokal
+          const currentList = StorageService.getUsers();
+          const merged = [...currentList.filter(u => u.id !== cloudUser.id), cloudUser];
+          setStored(STORAGE_KEYS.USERS, merged);
+        }
+      } catch (err) {
+        console.warn('Gagal memverifikasi user ke Supabase:', err);
+      }
+    }
+
     if (!found) {
       return { success: false, message: 'Username atau NIP/NUPTK tidak terdaftar dalam sistem.' };
     }
+
+    // 4. Verifikasi Password (dengan cloud check jika ada pembaruan password di cloud)
     if (found.password !== cleanPass) {
-      return { success: false, message: 'Password salah. Silakan periksa kembali.' };
+      try {
+        const cloudUser = await SupabaseService.getUserByCredentials(cleanId);
+        if (cloudUser && cloudUser.password === cleanPass) {
+          found = cloudUser;
+          const currentList = StorageService.getUsers();
+          const merged = [...currentList.filter(u => u.id !== cloudUser.id), cloudUser];
+          setStored(STORAGE_KEYS.USERS, merged);
+        } else {
+          return { success: false, message: 'Password salah. Silakan periksa kembali.' };
+        }
+      } catch {
+        return { success: false, message: 'Password salah. Silakan periksa kembali.' };
+      }
     }
 
+    // Simpan sesi aktif
     StorageService.setCurrentUser(found);
+
+    // Otomatis tarik seluruh data siswa & kelas dari Supabase di background agar data lengkap
+    StorageService.initCloudSync(false).catch(() => {});
+
     return { success: true, user: found };
   },
 
@@ -408,6 +498,13 @@ export const StorageService = {
         setStored(STORAGE_KEYS.GRADES, data.grades);
         updatedItems += data.grades.length;
       }
+      if (data.attendance && data.attendance.length > 0) {
+        setStored(STORAGE_KEYS.ATTENDANCE, data.attendance);
+        updatedItems += data.attendance.length;
+      }
+
+      setStored('erapor_last_sync_v1', new Date().toISOString());
+      window.dispatchEvent(new CustomEvent('erapor_data_synced', { detail: { count: updatedItems } }));
 
       return {
         success: true,
@@ -417,6 +514,30 @@ export const StorageService = {
     } catch (err: any) {
       return { success: false, message: err?.message || 'Gagal mengambil data dari Supabase.' };
     }
+  },
+
+  // Singleton / debounced background synchronization on app startup
+  initCloudSync: (() => {
+    let activePromise: Promise<boolean> | null = null;
+    return async (force: boolean = false): Promise<boolean> => {
+      if (activePromise && !force) return activePromise;
+      activePromise = (async () => {
+        try {
+          const res = await StorageService.pullFromSupabase();
+          return res.success;
+        } catch (err) {
+          console.warn('Background cloud sync error:', err);
+          return false;
+        } finally {
+          setTimeout(() => { activePromise = null; }, 5000);
+        }
+      })();
+      return activePromise;
+    };
+  })(),
+
+  getLastSyncTime: (): string | null => {
+    return getStored<string | null>('erapor_last_sync_v1', null);
   },
 
   // Get grades for a specific class and mapel
