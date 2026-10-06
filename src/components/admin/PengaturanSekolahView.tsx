@@ -1280,20 +1280,100 @@ export const PengaturanSekolahView: React.FC = () => {
             </div>
           </div>
 
-          <div className="p-4 bg-indigo-50/70 border border-indigo-100 rounded-2xl flex items-center justify-between text-xs">
+          {/* 3 MENU PENGATURAN KKM PER TINGKATAN KELAS */}
+          <div className="space-y-3 pt-2 border-t border-slate-100">
             <div>
-              <span className="font-bold text-indigo-950">KKM / KKTP Standar Sekolah:</span>
-              <p className="text-[11px] text-indigo-800">Standar batas ketercapaian tujuan pembelajaran jika mapel belum diset spesifik.</p>
+              <span className="font-bold text-slate-900 text-sm flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-indigo-600" />
+                <span>Standar KKM / KKTP Berdasarkan Tingkatan Kelas (3 Menu Tingkat)</span>
+              </span>
+              <p className="text-xs text-slate-500 mt-0.5">
+                Standar KKM dibuat per tingkatan karena setiap jenjang memiliki target batas ketuntasan minimal yang berbeda.
+              </p>
             </div>
-            <div className="w-24">
-              <input
-                type="number"
-                min="50"
-                max="100"
-                value={settings.kkmDefault}
-                onChange={(e) => handleInputChange('kkmDefault', Number(e.target.value))}
-                className="w-full px-3 py-2 bg-white border border-indigo-200 rounded-xl text-center font-bold text-sm text-indigo-700"
-              />
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+              {/* Menu 1: KKM Kelas VII */}
+              <div className="p-4 bg-gradient-to-br from-indigo-50/90 via-indigo-50/50 to-white border border-indigo-200 rounded-2xl relative overflow-hidden shadow-xs hover:border-indigo-400 transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-800 border border-indigo-200">
+                    Tingkat Kelas VII (Fase D)
+                  </span>
+                  <span className="text-[11px] text-slate-400 font-medium">11 Rombel</span>
+                </div>
+                <div className="flex items-center justify-between gap-3 mt-3">
+                  <div>
+                    <label className="font-bold text-slate-800 block text-xs">KKM Kelas VII</label>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Standar ketuntasan kelas VII-A s.d VII-K</p>
+                  </div>
+                  <div className="w-20 shrink-0">
+                    <input
+                      type="number"
+                      min="50"
+                      max="100"
+                      value={settings.kkmKelas7 ?? 76}
+                      onChange={(e) => handleInputChange('kkmKelas7', Number(e.target.value))}
+                      className="w-full px-2.5 py-2 bg-white border border-indigo-300 rounded-xl text-center font-black text-base text-indigo-700 shadow-xs focus:ring-2 focus:ring-indigo-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Menu 2: KKM Kelas VIII */}
+              <div className="p-4 bg-gradient-to-br from-emerald-50/90 via-emerald-50/50 to-white border border-emerald-200 rounded-2xl relative overflow-hidden shadow-xs hover:border-emerald-400 transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+                    Tingkat Kelas VIII (Fase D)
+                  </span>
+                  <span className="text-[11px] text-slate-400 font-medium">11 Rombel</span>
+                </div>
+                <div className="flex items-center justify-between gap-3 mt-3">
+                  <div>
+                    <label className="font-bold text-slate-800 block text-xs">KKM Kelas VIII</label>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Standar ketuntasan kelas VIII-A s.d VIII-K</p>
+                  </div>
+                  <div className="w-20 shrink-0">
+                    <input
+                      type="number"
+                      min="50"
+                      max="100"
+                      value={settings.kkmKelas8 ?? 78}
+                      onChange={(e) => handleInputChange('kkmKelas8', Number(e.target.value))}
+                      className="w-full px-2.5 py-2 bg-white border border-emerald-300 rounded-xl text-center font-black text-base text-emerald-700 shadow-xs focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Menu 3: KKM Kelas IX */}
+              <div className="p-4 bg-gradient-to-br from-amber-50/90 via-amber-50/50 to-white border border-amber-200 rounded-2xl relative overflow-hidden shadow-xs hover:border-amber-400 transition-all">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+                    Tingkat Kelas IX (Fase D)
+                  </span>
+                  <span className="text-[11px] text-slate-400 font-medium">11 Rombel</span>
+                </div>
+                <div className="flex items-center justify-between gap-3 mt-3">
+                  <div>
+                    <label className="font-bold text-slate-800 block text-xs">KKM Kelas IX</label>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Standar ketuntasan kelas IX-A s.d IX-K</p>
+                  </div>
+                  <div className="w-20 shrink-0">
+                    <input
+                      type="number"
+                      min="50"
+                      max="100"
+                      value={settings.kkmKelas9 ?? 80}
+                      onChange={(e) => handleInputChange('kkmKelas9', Number(e.target.value))}
+                      className="w-full px-2.5 py-2 bg-white border border-amber-300 rounded-xl text-center font-black text-base text-amber-700 shadow-xs focus:ring-2 focus:ring-amber-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-[11px] text-slate-600 flex items-center justify-between">
+              <span>Batas KKM di atas otomatis diterapkan pada formulir input nilai guru, kalkulasi ketuntasan siswa, buku leger nilai, dan rekapitulasi sesuai kelas masing-masing.</span>
             </div>
           </div>
         </form>

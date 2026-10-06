@@ -143,16 +143,15 @@ const StudentReportDocument: React.FC<StudentReportDocumentProps> = ({
             <tr className="bg-slate-100 text-slate-900 font-bold text-center border-b border-slate-400">
               <th className="border border-slate-400 py-1 px-1.5 w-7">No</th>
               <th className="border border-slate-400 py-1 px-2.5 text-left">Mata Pelajaran</th>
-              <th className="border border-slate-400 py-1 px-1.5 w-11">KKM</th>
-              <th className="border border-slate-400 py-1 px-1.5 w-14">Nilai Akhir</th>
-              <th className="border border-slate-400 py-1 px-1.5 w-11">Predikat</th>
+              <th className="border border-slate-400 py-1 px-1.5 w-16">Nilai Akhir</th>
+              <th className="border border-slate-400 py-1 px-1.5 w-14">Predikat</th>
               <th className="border border-slate-400 py-1 px-2.5 text-left">Capaian Kompetensi / Catatan Kemajuan</th>
             </tr>
           </thead>
           <tbody>
             {/* Kelompok A */}
             <tr className="bg-slate-50 font-bold text-[9.5px]">
-              <td colSpan={6} className="border border-slate-400 py-0.5 px-2 uppercase text-slate-700">
+              <td colSpan={5} className="border border-slate-400 py-0.5 px-2 uppercase text-slate-700">
                 A. Kelompok Mata Pelajaran Umum
               </td>
             </tr>
@@ -165,7 +164,6 @@ const StudentReportDocument: React.FC<StudentReportDocumentProps> = ({
                 <tr key={subj.id} className="border-b border-slate-300">
                   <td className="border border-slate-300 py-1 px-1.5 text-center">{idx + 1}</td>
                   <td className="border border-slate-300 py-1 px-2.5 font-semibold text-slate-900">{subj.nama}</td>
-                  <td className="border border-slate-300 py-1 px-1.5 text-center font-mono">{subj.kkm}</td>
                   <td className="border border-slate-300 py-1 px-1.5 text-center font-bold font-mono">{score}</td>
                   <td className="border border-slate-300 py-1 px-1.5 text-center font-bold">{predikat}</td>
                   <td className="border border-slate-300 py-1 px-2.5 text-slate-700 leading-tight text-[9.5px]">{capaian}</td>
@@ -177,7 +175,7 @@ const StudentReportDocument: React.FC<StudentReportDocumentProps> = ({
             {mulok.length > 0 && (
               <>
                 <tr className="bg-slate-50 font-bold text-[9.5px]">
-                  <td colSpan={6} className="border border-slate-400 py-0.5 px-2 uppercase text-slate-700">
+                  <td colSpan={5} className="border border-slate-400 py-0.5 px-2 uppercase text-slate-700">
                     B. Muatan Lokal
                   </td>
                 </tr>
@@ -190,7 +188,6 @@ const StudentReportDocument: React.FC<StudentReportDocumentProps> = ({
                     <tr key={subj.id} className="border-b border-slate-300">
                       <td className="border border-slate-300 py-1 px-1.5 text-center">{kelA.length + idx + 1}</td>
                       <td className="border border-slate-300 py-1 px-2.5 font-semibold text-slate-900">{subj.nama}</td>
-                      <td className="border border-slate-300 py-1 px-1.5 text-center font-mono">{subj.kkm}</td>
                       <td className="border border-slate-300 py-1 px-1.5 text-center font-bold font-mono">{score}</td>
                       <td className="border border-slate-300 py-1 px-1.5 text-center font-bold">{predikat}</td>
                       <td className="border border-slate-300 py-1 px-2.5 text-slate-700 leading-tight text-[9.5px]">{capaian}</td>
@@ -202,7 +199,7 @@ const StudentReportDocument: React.FC<StudentReportDocumentProps> = ({
 
             {/* Total & Average Row */}
             <tr className="bg-slate-100 font-bold border-t-2 border-slate-400">
-              <td colSpan={3} className="border border-slate-400 py-1 px-2.5 text-right">
+              <td colSpan={2} className="border border-slate-400 py-1 px-2.5 text-right">
                 Jumlah Nilai (11 Mata Pelajaran) :
               </td>
               <td className="border border-slate-400 py-1 px-1.5 text-center font-mono font-bold text-slate-900">
