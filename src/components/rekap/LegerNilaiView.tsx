@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { UserAccount, SchoolClass } from '../../types';
 import { StorageService } from '../../services/storage';
+import { ExcelService } from '../../services/excelService';
 
 interface LegerNilaiViewProps {
   currentUser: UserAccount;
@@ -52,36 +53,14 @@ export const LegerNilaiView: React.FC<LegerNilaiViewProps> = ({
     window.print();
   };
 
-  const handleExportLegerCSV = () => {
-    // 11 mapel headers
-    const mapelHeaders = subjects.map(s => s.kode);
-    const headers = ['No', 'NIS', 'Nama Siswa', 'JK', ...mapelHeaders, 'Total', 'Rerata', 'Peringkat', 'Sakit', 'Izin', 'Alpa'];
-
-    const rows = summaryData.summaries.map((s, idx) => {
-      const mapelScores = subjects.map(sub => s.grades[sub.id]?.nilaiAkhir ?? 0);
-      return [
-        idx + 1,
-        `"${s.student.nis}"`,
-        `"${s.student.nama}"`,
-        s.student.jenisKelamin,
-        ...mapelScores,
-        s.totalNilai,
-        s.rataRata,
-        s.ranking,
-        s.kehadiran?.sakit ?? 0,
-        s.kehadiran?.izin ?? 0,
-        s.kehadiran?.alpa ?? 0
-      ].join(';');
-    });
-
-    const csv = [headers.join(';'), ...rows].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `Leger_Nilai_PTS_${selectedClassId}_${settings.tahunAjaran.replace('/', '-')}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+  const handleExportLegerExcel = () => {
+    ExcelService.exportLegerToExcel(
+      summaryData.summaries,
+      subjects,
+      currentClass?.nama || selectedClassId,
+      selectedClassId,
+      settings.tahunAjaran
+    );
   };
 
   return (
@@ -108,11 +87,12 @@ export const LegerNilaiView: React.FC<LegerNilaiViewProps> = ({
 
           <div className="flex items-center gap-2">
             <button
-              onClick={handleExportLegerCSV}
-              className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5"
+              onClick={handleExportLegerExcel}
+              className="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5"
+              title="Unduh Leger Nilai 11 Mapel Kelas Ini ke Format Microsoft Excel (.xlsx)"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span>Ekspor Leger CSV</span>
+              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Ekspor Leger (Excel)</span>
             </button>
             <button
               onClick={handlePrintLeger}

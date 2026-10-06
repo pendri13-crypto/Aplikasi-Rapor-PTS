@@ -1,5 +1,5 @@
 import * as XLSX from 'xlsx';
-import { UserAccount, Student, SchoolClass, Subject } from '../types';
+import { UserAccount, Student, SchoolClass, Subject, StudentReportSummary } from '../types';
 import { INITIAL_CLASSES, INITIAL_SUBJECTS } from '../data/seedData';
 
 export const ExcelService = {
@@ -484,5 +484,107 @@ export const ExcelService = {
       reader.onerror = () => reject(new Error('Gagal membaca file Excel kelas'));
       reader.readAsArrayBuffer(file);
     });
+  },
+
+  // ==========================================
+  // 5. REKAPITULASI 3 BULAN EXCEL (.xlsx)
+  // ==========================================
+  exportRekap3BulanToExcel: (
+    summaries: StudentReportSummary[],
+    className: string,
+    classId: string,
+    tahunAjaran: string
+  ) => {
+    const excelData = summaries.map((s) => ({
+      'Peringkat': s.ranking,
+      'NIS': String(s.student.nis),
+      'NISN': String(s.student.nisn || '-'),
+      'Nama_Siswa': s.student.nama,
+      'JK': s.student.jenisKelamin,
+      'Total_Nilai_11_Mapel': s.totalNilai,
+      'Rata_Rata': s.rataRata,
+      'Mapel_Tuntas': s.jumlahMapelTuntas,
+      'Mapel_Belum_Tuntas': s.jumlahMapelBelumTuntas,
+      'Status_Kelulusan': s.jumlahMapelBelumTuntas === 0 && s.totalNilai > 0 ? 'Tuntas Seluruh Mapel' : `${s.jumlahMapelBelumTuntas} Mapel Perlu Bimbingan`
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+    worksheet['!cols'] = [
+      { wch: 10 }, // Peringkat
+      { wch: 14 }, // NIS
+      { wch: 16 }, // NISN
+      { wch: 32 }, // Nama_Siswa
+      { wch: 6 },  // JK
+      { wch: 22 }, // Total_Nilai
+      { wch: 12 }, // Rata_Rata
+      { wch: 14 }, // Mapel_Tuntas
+      { wch: 20 }, // Mapel_Belum_Tuntas
+      { wch: 26 }, // Status_Kelulusan
+    ];
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, `Rekap_${classId}`);
+
+    const fileName = `Rekapitulasi_3Bulan_${classId}_${tahunAjaran.replace('/', '-')}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
+  },
+
+  // ==========================================
+  // 6. LEGER NILAI PTS 11 MAPEL EXCEL (.xlsx)
+  // ==========================================
+  exportLegerToExcel: (
+    summaries: StudentReportSummary[],
+    subjects: Subject[],
+    className: string,
+    classId: string,
+    tahunAjaran: string
+  ) => {
+    const excelData = summaries.map((s, idx) => {
+      const row: Record<string, string | number> = {
+        'No': idx + 1,
+        'NIS': String(s.student.nis),
+        'NISN': String(s.student.nisn || '-'),
+        'Nama_Siswa': s.student.nama,
+        'JK': s.student.jenisKelamin,
+      };
+
+      // Add each subject score
+      subjects.forEach(sub => {
+        row[sub.kode] = s.grades[sub.id]?.nilaiAkhir ?? 0;
+      });
+
+      row['Total_Nilai'] = s.totalNilai;
+      row['Rerata'] = s.rataRata;
+      row['Peringkat'] = s.ranking;
+      row['Sakit'] = s.kehadiran?.sakit ?? 0;
+      row['Izin'] = s.kehadiran?.izin ?? 0;
+      row['Alpa'] = s.kehadiran?.alpa ?? 0;
+
+      return row;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(excelData);
+
+    worksheet['!cols'] = [
+      { wch: 6 },  // No
+      { wch: 14 }, // NIS
+      { wch: 16 }, // NISN
+      { wch: 32 }, // Nama_Siswa
+      { wch: 6 },  // JK
+      ...subjects.map(() => ({ wch: 10 })), // 11 mapel columns
+      { wch: 14 }, // Total_Nilai
+      { wch: 10 }, // Rerata
+      { wch: 10 }, // Peringkat
+      { wch: 8 },  // Sakit
+      { wch: 8 },  // Izin
+      { wch: 8 },  // Alpa
+    ];
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, `Leger_${classId}`);
+
+    const fileName = `Leger_Nilai_PTS_${classId}_${tahunAjaran.replace('/', '-')}.xlsx`;
+    XLSX.writeFile(workbook, fileName);
   }
 };

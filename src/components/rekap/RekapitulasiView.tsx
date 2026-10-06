@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { UserAccount, SchoolClass, StudentReportSummary, TingkatKelas } from '../../types';
 import { StorageService } from '../../services/storage';
+import { ExcelService } from '../../services/excelService';
 import { RaporCetakModal } from '../cetak/RaporCetakModal';
 
 interface RekapitulasiViewProps {
@@ -68,29 +69,14 @@ export const RekapitulasiView: React.FC<RekapitulasiViewProps> = ({
   const top2 = summaryData.summaries[1];
   const top3 = summaryData.summaries[2];
 
-  // Export Rekap Summary
-  const handleExportRekapCSV = () => {
-    const headers = ['Peringkat', 'NIS', 'Nama Siswa', 'JK', 'Total Nilai (11 Mapel)', 'Rata-rata', 'Mapel Tuntas', 'Mapel Belum Tuntas', 'Status'];
-    const rows = summaryData.summaries.map(s => [
-      s.ranking,
-      `"${s.student.nis}"`,
-      `"${s.student.nama}"`,
-      s.student.jenisKelamin,
-      s.totalNilai,
-      s.rataRata,
-      s.jumlahMapelTuntas,
-      s.jumlahMapelBelumTuntas,
-      s.jumlahMapelBelumTuntas === 0 && s.totalNilai > 0 ? 'Tuntas' : 'Perlu Bimbingan'
-    ]);
-
-    const csvContent = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `Rekapitulasi_3Bulan_${selectedClassId}_${settings.tahunAjaran.replace('/', '-')}.csv`;
-    link.click();
-    URL.revokeObjectURL(url);
+  // Export Rekap Summary to Excel (.xlsx)
+  const handleExportRekapExcel = () => {
+    ExcelService.exportRekap3BulanToExcel(
+      summaryData.summaries,
+      currentClass?.nama || selectedClassId,
+      selectedClassId,
+      settings.tahunAjaran
+    );
   };
 
   return (
@@ -136,11 +122,12 @@ export const RekapitulasiView: React.FC<RekapitulasiViewProps> = ({
             </button>
 
             <button
-              onClick={handleExportRekapCSV}
-              className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5"
+              onClick={handleExportRekapExcel}
+              className="px-3.5 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 rounded-xl text-xs font-bold transition-colors flex items-center gap-1.5"
+              title="Unduh Rekapitulasi 3 Bulan Kelas Ini ke Format Microsoft Excel (.xlsx)"
             >
-              <Download className="w-3.5 h-3.5" />
-              <span>Ekspor Rekap (CSV)</span>
+              <FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Ekspor Rekap (Excel)</span>
             </button>
           </div>
         </div>
